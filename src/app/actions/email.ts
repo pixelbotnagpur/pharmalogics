@@ -11,13 +11,13 @@ const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Pharmlogics <onboarding@res
 
 /**
  * Dispatches a clinical email via Resend.
- * Returns a result object to prevent unhandled server exceptions.
+ * Uses lazy initialization to prevent build-time failures if keys are missing.
  */
 export async function sendClinicalEmail({ to, subject, html }: { to: string, subject: string, html: string }) {
   const apiKey = process.env.RESEND_API_KEY;
   
   if (!apiKey) {
-    console.warn('RESEND_API_KEY is not configured. Email remains in dry-run mode.');
+    console.warn('RESEND_API_KEY is not configured. Email node remains in local simulation mode.');
     return { success: false, error: 'Configuration missing' };
   }
 
@@ -31,13 +31,13 @@ export async function sendClinicalEmail({ to, subject, html }: { to: string, sub
     });
 
     if (error) {
-      console.error('Resend API Error:', error);
+      console.error('Resend Dispatch Error:', error);
       return { success: false, error };
     }
 
     return { success: true, data };
   } catch (err: any) {
-    console.error('Clinical Email dispatch failed:', err);
+    console.error('Clinical Email handshake failed:', err);
     return { success: false, error: err.message || 'Unknown dispatch error' };
   }
 }
