@@ -125,11 +125,17 @@ export default function AdminUsersPage() {
     user: null
   });
 
-  // Data Fetching
-  const usersQuery = useMemoFirebase(() => collection(db, 'users'), [db]);
+  // Data Fetching - Guarded by currentUser identity to prevent permission errors
+  const usersQuery = useMemoFirebase(() => {
+    if (!db || !currentUser) return null;
+    return collection(db, 'users');
+  }, [db, currentUser]);
   const { data: users, isLoading: usersLoading } = useCollection<UserProfile>(usersQuery);
 
-  const adminRolesQuery = useMemoFirebase(() => collection(db, 'roles_admin'), [db]);
+  const adminRolesQuery = useMemoFirebase(() => {
+    if (!db || !currentUser) return null;
+    return collection(db, 'roles_admin');
+  }, [db, currentUser]);
   const { data: adminRoles, isLoading: rolesLoading } = useCollection<{ uid: string; role: AdminRoleType; email: string }>(adminRolesQuery);
 
   const getAdminRole = (uid: string) => adminRoles?.find(role => role.id === uid)?.role;
@@ -301,7 +307,7 @@ export default function AdminUsersPage() {
             </div>
             <div>
               <p className="text-[9px] font-bold uppercase tracking-widest text-white/60">Total Population</p>
-              <p className="text-xl font-headline">{users?.length || 0} Profile(s)</p>
+              <p className="text-xl font-headline">{(users || []).length} Profile(s)</p>
             </div>
           </CardContent>
         </Card>
@@ -312,7 +318,7 @@ export default function AdminUsersPage() {
             </div>
             <div>
               <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Governing Nodes</p>
-              <p className="text-xl font-headline">{adminRoles?.length || 0} Admin(s)</p>
+              <p className="text-xl font-headline">{(adminRoles || []).length} Admin(s)</p>
             </div>
           </CardContent>
         </Card>
