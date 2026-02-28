@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -66,7 +67,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import { StatusDialog } from '@/components/common/StatusDialog';
-import { useFirestore, useCollection, useMemoFirebase, setDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase';
+import { useFirestore, useCollection, useMemoFirebase, setDocumentNonBlocking, addDocumentNonBlocking, useUser } from '@/firebase';
 import { collection, query, orderBy, doc } from 'firebase/firestore';
 import type { Order, OrderStatus, LifecycleEvent, QCReport } from '@/lib/types';
 import { generateQCReport } from '@/ai/flows/qc-report-generator';
@@ -90,6 +91,7 @@ const AUTOMATED_LAB_STEPS: { status: OrderStatus; note: string; duration: number
 
 export default function AdminOrdersPage() {
   const db = useFirestore();
+  const { user } = useUser();
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusDialog, setStatusDialog] = useState({ open: false, title: '', desc: '' });
@@ -104,7 +106,11 @@ export default function AdminOrdersPage() {
   const [labProgress, setLabProgress] = useState(0);
   const [currentLabStep, setCurrentLabStep] = useState<typeof AUTOMATED_LAB_STEPS[0] | null>(null);
 
-  const ordersQuery = useMemoFirebase(() => query(collection(db, 'orders_global'), orderBy('createdAt', 'desc')), [db]);
+  // ordersQuery is guarded by user identity to prevent permission errors
+  const ordersQuery = useMemoFirebase(() => {
+    if (!db || !user) return null;
+    return query(collection(db, 'orders_global'), orderBy('createdAt', 'desc'));
+  }, [db, user]);
   const { data: orders, isLoading } = useCollection<Order>(ordersQuery);
 
   const filteredOrders = useMemo(() => {
@@ -294,7 +300,7 @@ export default function AdminOrdersPage() {
         <CardHeader className="bg-muted/30 pb-4">
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm font-bold uppercase tracking-widest text-primary">Global Order Stream</CardTitle>
-            <Badge variant="outline" className="font-mono text-[10px] bg-background">{filteredOrders.length} Protocols Active</Badge>
+            <Badge variant="outline" className="font-mono text-[10px] bg-background">{(orders || []).length} Protocols Active</Badge>
           </div>
         </CardHeader>
         <CardContent className="p-0">
