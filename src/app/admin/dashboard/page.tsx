@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from "next/link";
@@ -28,12 +27,13 @@ import {
   Layers,
   Tag,
   ShieldAlert,
+  ShieldCheck,
   Zap,
   Truck,
   Sparkles,
   Info
 } from "lucide-react";
-import { useCollection, useFirestore, useMemoFirebase, useDoc } from "@/firebase";
+import { useCollection, useFirestore, useMemoFirebase, useDoc, useUser } from "@/firebase";
 import { collection, query, orderBy, doc } from "firebase/firestore";
 import type { Product, Order, StoreSettings } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -51,14 +51,26 @@ import {
 
 export default function AdminDashboard() {
   const db = useFirestore();
+  const { user } = useUser();
   const { toast } = useToast();
 
-  // 1. Fetch Products for SKU stats and Stock levels
-  const productsQuery = useMemoFirebase(() => collection(db, 'products'), [db]);
+  // Fetch Role - Guarded to prevent unauthorized fetch attempts
+  const roleRef = useMemoFirebase(() => user ? doc(db, 'roles_admin', user.uid) : null, [db, user]);
+  const { data: roleData } = useDoc<{ role: string }>(roleRef);
+  const activeRole = roleData?.role || null;
+
+  // 1. Fetch Products for SKU stats and Stock levels - Guarded by activeRole
+  const productsQuery = useMemoFirebase(() => {
+    if (!db || !user || !activeRole) return null;
+    return collection(db, 'products');
+  }, [db, user, activeRole]);
   const { data: products, isLoading: productsLoading } = useCollection<Product>(productsQuery);
 
-  // 2. Fetch all Global Orders for Revenue and Growth aggregation
-  const ordersQuery = useMemoFirebase(() => query(collection(db, 'orders_global'), orderBy('createdAt', 'desc')), [db]);
+  // 2. Fetch all Global Orders for Revenue and Growth aggregation - Guarded by activeRole
+  const ordersQuery = useMemoFirebase(() => {
+    if (!db || !user || !activeRole) return null;
+    return query(collection(db, 'orders_global'), orderBy('createdAt', 'desc'));
+  }, [db, user, activeRole]);
   const { data: orders, isLoading: ordersLoading } = useCollection<Order>(ordersQuery);
 
   const settingsRef = useMemoFirebase(() => doc(db, 'settings', 'store'), [db]);
@@ -81,7 +93,7 @@ export default function AdminDashboard() {
         return acc + (item?.quantity || 0);
       }, 0);
       
-      const dailyVelocity = salesVolume / 30; // Assume order history represents a 30-day window for this proto
+      const dailyVelocity = salesVolume / 30;
       const daysRemaining = dailyVelocity > 0 ? product.stock / dailyVelocity : Infinity;
       
       let riskLevel: 'Critical' | 'High' | 'Stable' = 'Stable';
@@ -196,7 +208,6 @@ export default function AdminDashboard() {
     setIsAuditing(true);
     
     try {
-      // Mock history for audit based on real velocity
       const velocityNum = parseFloat(product.dailyVelocity);
       const salesHistory = Array.from({length: 7}, () => Math.round(velocityNum + (Math.random() * 4 - 2)));
       
@@ -275,7 +286,6 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid gap-6 grid-cols-1 lg:grid-cols-12">
-        {/* Main Charts */}
         <div className="lg:col-span-8 space-y-6">
           <Card className="border-none shadow-sm overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between">
@@ -322,7 +332,6 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Sidebar Alerts & Risks */}
         <div className="lg:col-span-4 space-y-6">
           <Card className="border-none shadow-sm overflow-hidden bg-white">
             <CardHeader className="bg-primary/5 pb-4">
@@ -474,7 +483,7 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between group">
                 <div className="flex items-center gap-4">
                   <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-600">
-                    <ShieldAlert className="h-5 w-5" />
+                    <ShieldCheck className="h-5 w-5" />
                   </div>
                   <div>
                     <p className="text-xs font-bold uppercase tracking-widest">Security Layer</p>
@@ -504,7 +513,6 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      {/* AI Stock Audit Dialog */}
       <Dialog open={!!auditProduct} onOpenChange={(open) => !open && setAuditProduct(null)}>
         <DialogContent className="max-w-md bg-card border-none shadow-2xl rounded-2xl overflow-hidden p-0">
           <DialogHeader className="p-8 bg-primary text-white">

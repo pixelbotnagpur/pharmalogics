@@ -66,6 +66,7 @@ export function Header() {
 
   // Expand transparency to all pages with standard heroes
   const isTransparentPage = useMemo(() => {
+    if (!pathname) return false;
     const transparentPaths = ['/', '/products', '/about', '/faqs', '/contact', '/blog'];
     return transparentPaths.includes(pathname) || 
            pathname.startsWith('/blog/') || 

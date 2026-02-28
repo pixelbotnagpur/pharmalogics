@@ -17,8 +17,8 @@ export function AuthHeader() {
   const settingsRef = useMemoFirebase(() => doc(db, 'settings', 'store'), [db]);
   const { data: settings } = useDoc<StoreSettings>(settingsRef);
 
-  const isAdmin = pathname.startsWith('/admin');
-  const isLogin = pathname.includes('login');
+  const isAdmin = pathname?.startsWith('/admin') || false;
+  const isLogin = pathname?.includes('login') || false;
 
   return (
     <header className="w-full h-16 px-4 border-b border-white/10 bg-primary z-50 shrink-0 sticky top-0 flex items-center">

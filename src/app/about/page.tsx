@@ -36,14 +36,16 @@ export default function AboutPage() {
   const pageRef = useMemoFirebase(() => doc(db, 'pages', 'about'), [db]);
   const { data: pageData, isLoading } = useDoc<WebPage>(pageRef);
 
-  // Fallback content if Cloud Data isn't initialized yet
-  const content = pageData?.content || {
-    hero: {
+  // Deep fallback for clinical data integrity
+  const raw = pageData?.content || {};
+  
+  const content = {
+    hero: raw.hero || {
       missionLabel: "OUR MISSION",
       title: "Engineering the Future of Wellness.",
       description: "We've combined the rigor of pharmaceutical standards with the wisdom of botanical medicine to create a new category: High-Bioavailability Human Optimization."
     },
-    story: {
+    story: raw.story || {
       label: "OUR STORY",
       title: "Bridging the gap between pharmaceutical rigor and botanical potential.",
       paragraphs: [
@@ -53,16 +55,16 @@ export default function AboutPage() {
       quote: "Pharmlogics is built for those who refuse to compromise on their biology. We are the architects of your vitality.",
       author: "Dr. Elena Thorne, Founder"
     },
-    values: {
+    values: raw.values || {
       label: "OUR VALUES",
       items: [
-        { title: 'FOCUS', description: 'Precision formulas designed for cognitive clarity.', icon: getImage('value_abstract_1') },
-        { title: 'VITALITY', description: 'Fueling cellular energy and metabolic health.', icon: getImage('value_abstract_2') },
-        { title: 'IMMUNITY', description: 'Strengthening your biological defenses.', icon: getImage('value_abstract_3') },
-        { title: 'MOBILITY', description: 'Supporting joint integrity and recovery.', icon: getImage('why_exist_1') },
+        { title: 'FOCUS', description: 'Precision formulas designed for cognitive clarity.', iconId: 'value_abstract_1' },
+        { title: 'VITALITY', description: 'Fueling cellular energy and metabolic health.', iconId: 'value_abstract_2' },
+        { title: 'IMMUNITY', description: 'Strengthening your biological defenses.', iconId: 'value_abstract_3' },
+        { title: 'MOBILITY', description: 'Supporting joint integrity and recovery.', iconId: 'why_exist_1' },
       ]
     },
-    ethos: {
+    ethos: raw.ethos || {
       label: "OUR ETHOS OF IMPACT",
       title: "Intentionally sourced. Scientifically sustained.",
       items: [
@@ -70,11 +72,11 @@ export default function AboutPage() {
         { title: 'Lightweight Pouch Design', content: 'Our signature flexible pouches use 80% less plastic.' }
       ]
     },
-    editorial: {
+    editorial: raw.editorial || {
       title: "Clinical & Nutritional Oversight",
       content: "Trust is our most important ingredient. Every Pharmlogics formula undergoes rigorous review by our lead nutritionist, Brooke Aaron (MS, RDN, LDN), alongside our clinical research team."
     },
-    community: {
+    community: raw.community || {
       label: "WE ARE PHARMLOGICS",
       title: "We see you.",
       paragraphs: [
@@ -83,14 +85,14 @@ export default function AboutPage() {
       ctaLabel: "EXPLORE OUR FORMULAS",
       ctaHref: "/products"
     },
-    contact: {
+    contact: raw.contact || {
       title: "How can we help your journey?",
       disclaimer: "*These statements have not been evaluated by the Food and Drug Administration."
     }
   };
 
   // Transform value items to resolve icon objects from IDs if necessary
-  const processedValueItems = (content.values?.items || []).map((item: any) => ({
+  const processedValueItems = (content.values.items || []).map((item: any) => ({
     ...item,
     icon: item.icon || (item.iconId ? getImage(item.iconId) : getImage('value_abstract_1'))
   }));
@@ -128,7 +130,7 @@ export default function AboutPage() {
       />
 
       <ValuesGrid 
-        label={content.values?.label || "OUR VALUES"}
+        label={content.values.label || "OUR VALUES"}
         values={processedValueItems}
       />
 

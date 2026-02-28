@@ -183,17 +183,17 @@ export default function AdminLayout({
     const profileRef = useMemoFirebase(() => user ? doc(db, 'users', user.uid) : null, [db, user]);
     const { data: profileData } = useDoc<UserProfile>(profileRef);
 
-    // Monitor for New Orders
-    const pendingOrdersQuery = useMemoFirebase(() => {
-      if (!db) return null;
-      return query(collection(db, 'orders_global'), where('status', '==', 'Pending Verification'));
-    }, [db]);
-    const { data: pendingOrders } = useCollection<Order>(pendingOrdersQuery);
-    const pendingOrdersCount = pendingOrders?.length || 0;
-
     // Role logic
     const activeRole = roleData?.role || null;
-    const adminName = profileData ? `${profileData.firstName} ${profileData.lastName}` : (user?.displayName || 'Admin Node');
+    const adminName = profileData ? `${profileData.firstName || ''} ${profileData.lastName || ''}`.trim() : (user?.displayName || 'Admin Node');
+
+    // Monitor for New Orders - Guarded by activeRole to prevent early fetch permission errors
+    const pendingOrdersQuery = useMemoFirebase(() => {
+      if (!db || !user || !activeRole) return null;
+      return query(collection(db, 'orders_global'), where('status', '==', 'Pending Verification'));
+    }, [db, user, activeRole]);
+    const { data: pendingOrders } = useCollection<Order>(pendingOrdersQuery);
+    const pendingOrdersCount = pendingOrders?.length || 0;
 
     useEffect(() => {
         if (pathname === '/admin/login' || pathname === '/admin/signup') return;
@@ -302,7 +302,7 @@ export default function AdminLayout({
                     </Link>
                   </SidebarMenuButton>
                   {item.href === '/admin/orders' && pendingOrdersCount > 0 && (
-                    <SidebarMenuBadge className="bg-accent text-white border-none font-bold tabular-nums">
+                    <SidebarMenuBadge className="bg-accent text-white border-none font-bold tabular-nums top-1/2 -translate-y-1/2">
                       {pendingOrdersCount}
                     </SidebarMenuBadge>
                   )}

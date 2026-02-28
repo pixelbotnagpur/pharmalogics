@@ -48,8 +48,8 @@ export default function ProductsPage() {
 
   const isLoading = pageLoading || productsLoading || categoriesLoading;
 
-  const content = pageData?.content || {
-    hero: {
+  const content = {
+    hero: pageData?.content?.hero || {
       label: "THE PHARMLOGICS CATALOG",
       title: "Pure clinical excellence.",
       description: "Explore our curated selection of science-backed formulas designed for your specific health goals. High-bioavailability human optimization."
