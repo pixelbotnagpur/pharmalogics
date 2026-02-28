@@ -1,0 +1,149 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "prod_001",
+      "description": "Omega-3 Fish Oil",
+      "imageUrl": "https://images.unsplash.com/photo-1698943510831-8be9b11bda18?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzdXBwbGVtZW50JTIwYm90dGxlfGVufDB8fHx8MTc3MTkwNzI3OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "supplement bottle"
+    },
+    {
+      "id": "prod_002",
+      "description": "Vitamin D3",
+      "imageUrl": "https://images.unsplash.com/photo-1762328500413-1a4cb2023059?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c3VwcGxlbWVudCUyMGJvdHRsZXxlbnwwfHx8fDE3NzE5MDcyNzh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "supplement bottle"
+    },
+    {
+      "id": "prod_003",
+      "description": "Probiotic Blend",
+      "imageUrl": "https://images.unsplash.com/photo-1763668331599-487470fb85b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxzdXBwbGVtZW50JTIwYm90dGxlfGVufDB8fHx8MTc3MTkwNzI3OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "supplement bottle"
+    },
+    {
+      "id": "prod_004",
+      "description": "Multivitamin Complex",
+      "imageUrl": "https://images.unsplash.com/photo-1762328500413-1a4cb2023059?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c3VwcGxlbWVudCUyMGJvdHRsZXxlbnwwfHx8fDE3NzE5MDcyNzh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "supplement bottle"
+    },
+    {
+      "id": "prod_005",
+      "description": "Magnesium Glycinate",
+      "imageUrl": "https://images.unsplash.com/photo-1698943510831-8be9b11bda18?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzdXBwbGVtZW50JTIwYm90dGxlfGVufDB8fHx8MTc3MTkwNzI3OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "supplement bottle"
+    },
+    {
+      "id": "prod_006",
+      "description": "Turmeric Curcumin",
+      "imageUrl": "https://images.unsplash.com/photo-1763668177859-0ed5669a795e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxzdXBwbGVtZW50JTIwYm90dGxlfGVufDB8fHx8MTc3MTkwNzI3OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "supplement bottle"
+    },
+    {
+      "id": "why_exist_1",
+      "description": "Abstract water splash",
+      "imageUrl": "https://images.unsplash.com/photo-1533167649158-6d508895b680?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx3YXRlciUyMHNwbGFzaHxlbnwwfHx8fDE3NzE5MzM1OTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "water splash"
+    },
+    {
+      "id": "why_exist_2",
+      "description": "Man on an escalator",
+      "imageUrl": "https://images.unsplash.com/photo-1725951612621-dcf8f88d0508?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtYW4lMjBlc2NhbGF0b3J8ZW58MHx8fHwxNzcxOTU2MjM2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man escalator"
+    },
+    {
+      "id": "why_exist_3",
+      "description": "Smiling woman holding product",
+      "imageUrl": "https://images.unsplash.com/photo-1554727242-741c14fa561c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3b21hbiUyMHNtaWxpbmd8ZW58MHx8fHwxNzcxOTQ2NDAzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman smiling"
+    },
+    {
+      "id": "bundle_pack",
+      "description": "Wellness supplement bundle",
+      "imageUrl": "https://images.unsplash.com/photo-1740592754365-2117f5977528?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxzdXBwbGVtZW50JTIwYm90dGxlfGVufDB8fHx8MTc3MTk2NTM0NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "supplement bundle"
+    },
+    {
+      "id": "medically_proven_runner",
+      "description": "Woman running with motion blur effect",
+      "imageUrl": "https://images.unsplash.com/photo-1594911772125-07fc7a2d8d9f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx3Ym9tYW4lMjBydW5uaW5nfGVufDB8fHx8MTc3MTk3MDMzM3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman running"
+    },
+    {
+      "id": "brooke_aaron_avatar",
+      "description": "Avatar of Brooke Aaron",
+      "imageUrl": "https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjB3b21hbnxlbnwwfHx8fDE3NzE5NjUzNDV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "professional woman"
+    },
+    {
+      "id": "dosage_background",
+      "description": "Abstract background of water and light",
+      "imageUrl": "https://images.unsplash.com/photo-1620812097331-ff636155488f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxhYnN0cmFjdCUyMGJhY2tncm91bmR8ZW58MHx8fHwxNzcxODg3OTU0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract background"
+    },
+    {
+      "id": "dosage_person",
+      "description": "Portrait of a woman",
+      "imageUrl": "https://images.unsplash.com/photo-1609505848912-b7c3b8b4beda?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx3b21hbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc3MTk2NDE3NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman portrait"
+    },
+    {
+      "id": "mega_menu_bg",
+      "description": "Abstract background for mega menu",
+      "imageUrl": "https://images.unsplash.com/photo-1531297484001-80022131f5a1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxhYnN0cmFjdCUyMGRhcmslMjB3YWxscGFwZXJ8ZW58MHx8fHwxNzcyMjEwNzMxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract dark"
+    },
+    {
+      "id": "ethos_leaf",
+      "description": "Macro shot of a leaf",
+      "imageUrl": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+      "imageHint": "macro leaf"
+    },
+    {
+      "id": "value_abstract_1",
+      "description": "Abstract 3D shape 1",
+      "imageUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
+      "imageHint": "abstract 3d"
+    },
+    {
+      "id": "value_abstract_2",
+      "description": "Abstract 3D shape 2",
+      "imageUrl": "https://images.unsplash.com/photo-1633167606207-d840b5070fc2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
+      "imageHint": "abstract 3d"
+    },
+    {
+      "id": "value_abstract_3",
+      "description": "Abstract 3D shape 3",
+      "imageUrl": "https://images.unsplash.com/photo-1614850523296-d8c1af93d400?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
+      "imageHint": "abstract 3d"
+    },
+    {
+      "id": "login_hero",
+      "description": "Clinical research laboratory",
+      "imageUrl": "https://images.unsplash.com/photo-1579154235602-3c2c2aa5d72f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+      "imageHint": "clinical laboratory"
+    },
+    {
+      "id": "signup_hero",
+      "description": "High performance female athlete",
+      "imageUrl": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+      "imageHint": "performance athlete"
+    },
+    {
+      "id": "blog_1",
+      "description": "Clinical research scientist",
+      "imageUrl": "https://images.unsplash.com/photo-1532187875605-1ef648279673?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+      "imageHint": "science research"
+    },
+    {
+      "id": "blog_2",
+      "description": "Microscopic cell analysis",
+      "imageUrl": "https://images.unsplash.com/photo-1511174511562-5f7f18b874f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+      "imageHint": "microscope cells"
+    },
+    {
+      "id": "blog_3",
+      "description": "Biological molecular model",
+      "imageUrl": "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+      "imageHint": "molecular model"
+    }
+  ]
+}

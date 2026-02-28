@@ -1,0 +1,93 @@
+'use client';
+    
+import { useState, useEffect, useRef } from 'react';
+import {
+  DocumentReference,
+  onSnapshot,
+  DocumentData,
+  FirestoreError,
+  DocumentSnapshot,
+} from 'firebase/firestore';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
+
+/** Utility type to add an 'id' field to a given type T. */
+type WithId<T> = T & { id: string };
+
+/**
+ * Interface for the return value of the useDoc hook.
+ * @template T Type of the document data.
+ */
+export interface UseDocResult<T> {
+  data: WithId<T> | null; // Document data with ID, or null.
+  isLoading: boolean;       // True if loading.
+  error: FirestoreError | Error | null; // Error object, or null.
+}
+
+/**
+ * React hook to subscribe to a single Firestore document in real-time.
+ * Handles nullable references.
+ */
+export function useDoc<T = any>(
+  memoizedDocRef: DocumentReference<DocumentData> | null | undefined,
+): UseDocResult<T> {
+  const [data, setData] = useState<WithId<T> | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(!!memoizedDocRef);
+  const [error, setError] = useState<FirestoreError | Error | null>(null);
+
+  // Track the current ref to detect changes during render
+  const lastPathRef = useRef<string | null>(null);
+  const currentPath = memoizedDocRef?.path || null;
+
+  // If the path changed, we are effectively in a loading state for the NEW node
+  // regardless of what the current 'isLoading' state says.
+  const effectiveIsLoading = currentPath !== lastPathRef.current ? !!memoizedDocRef : isLoading;
+  const effectiveData = currentPath !== lastPathRef.current ? null : data;
+
+  useEffect(() => {
+    lastPathRef.current = currentPath;
+    
+    if (!memoizedDocRef) {
+      setData(null);
+      setIsLoading(false);
+      setError(null);
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    const unsubscribe = onSnapshot(
+      memoizedDocRef,
+      (snapshot: DocumentSnapshot<DocumentData>) => {
+        if (snapshot.exists()) {
+          setData({ ...(snapshot.data() as T), id: snapshot.id });
+        } else {
+          setData(null);
+        }
+        setError(null);
+        setIsLoading(false);
+      },
+      (error: FirestoreError) => {
+        if (error.code === 'permission-denied') {
+          const contextualError = new FirestorePermissionError({
+            operation: 'get',
+            path: memoizedDocRef.path,
+          });
+          setError(contextualError);
+          errorEmitter.emit('permission-error', contextualError);
+        } else {
+          // Surface the original error (e.g. missing index, quota exceeded).
+          console.error('[Firestore] Document listener error:', error.code, error.message);
+          setError(error);
+        }
+        setData(null);
+        setIsLoading(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [currentPath, memoizedDocRef]);
+
+  return { data: effectiveData, isLoading: effectiveIsLoading, error };
+}

@@ -1,0 +1,128 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * CLINICAL GOVERNANCE RULES v1.20 [CMS & Global Settings Support]
+     */
+
+    // --- Authentication Helpers ---
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function getAdminData() {
+      return get(/databases/$(database)/documents/roles_admin/$(request.auth.uid)).data;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+    }
+
+    function isSuperAdmin() {
+      return isAdmin() && getAdminData().role == 'Super Admin';
+    }
+
+    function isContentManager() {
+      return isAdmin() && (getAdminData().role == 'Content Manager' || isSuperAdmin());
+    }
+
+    function isLogisticsStaff() {
+      return isAdmin() && (getAdminData().role == 'Logistics Staff' || isSuperAdmin());
+    }
+
+    // --- Global CMS & Settings ---
+
+    match /pages/{pageId} {
+      allow read: if true;
+      allow write: if isContentManager();
+    }
+
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
+    match /coupons/{couponId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
+    // --- Registry Rules ---
+
+    match /mail/{mailId} {
+      allow create: if isSignedIn(); 
+      allow read, update, delete: if isSuperAdmin();
+    }
+
+    match /insights/{document=**} {
+      allow read: if true;
+      allow write: if isContentManager();
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isContentManager(); 
+    }
+
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isContentManager();
+    }
+
+    // --- User Data Nodes ---
+
+    match /users/{userId} {
+      allow get, list: if isOwner(userId) || isSuperAdmin();
+      allow create: if (isSignedIn() && (request.resource.data.id == request.auth.uid || userId == request.auth.uid)) || isSuperAdmin();
+      allow update: if isOwner(userId) || isSuperAdmin();
+      allow delete: if isSuperAdmin();
+
+      match /notifications/{notificationId} {
+        allow get, list: if isOwner(userId) || isSuperAdmin();
+        allow create: if isSuperAdmin() || isLogisticsStaff(); 
+        allow update: if isOwner(userId) || isSuperAdmin();
+        allow delete: if isOwner(userId) || isSuperAdmin();
+      }
+
+      match /subscriptions/{subscriptionId} {
+        allow get, list: if isOwner(userId) || isSuperAdmin();
+        allow create: if isOwner(userId);
+        allow update: if isOwner(userId) || isSuperAdmin();
+        allow delete: if isOwner(userId) || isSuperAdmin();
+      }
+
+      match /orders/{orderId} {
+        allow get, list: if isOwner(userId) || isSuperAdmin();
+        allow create: if isOwner(userId);
+        allow update: if isSuperAdmin();
+        allow delete: if isOwner(userId) || isSuperAdmin();
+      }
+
+      match /progress_logs/{logId} {
+        allow get, list: if isOwner(userId) || isSuperAdmin();
+        allow create: if isOwner(userId);
+        allow update, delete: if isOwner(userId);
+      }
+    }
+
+    match /orders_global/{orderId} {
+      allow get: if (isSignedIn() && resource.data.customerUid == request.auth.uid) || isLogisticsStaff();
+      allow list: if isLogisticsStaff();
+      allow create: if isSignedIn();
+      allow update, delete: if isLogisticsStaff();
+    }
+
+    match /roles_admin/{userId} {
+      allow get: if isSignedIn();
+      allow list: if isSuperAdmin();
+      allow create, update, delete: if isSuperAdmin();
+    }
+  }
+}
