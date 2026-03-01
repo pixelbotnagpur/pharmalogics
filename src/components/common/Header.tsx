@@ -64,10 +64,21 @@ export function Header() {
     return { name, email: user.email || '', initials };
   }, [user, profileData]);
 
-  // Expand transparency to all pages with standard heroes
+  // Expanded transparency protocol for all high-integrity hero pages
   const isTransparentPage = useMemo(() => {
     if (!pathname) return false;
-    const transparentPaths = ['/', '/products', '/about', '/faqs', '/contact', '/blog'];
+    const transparentPaths = [
+      '/', 
+      '/products', 
+      '/about', 
+      '/faqs', 
+      '/contact', 
+      '/blog',
+      '/delivery-and-returns',
+      '/terms-and-conditions',
+      '/privacy-policy',
+      '/cookie-policy'
+    ];
     return transparentPaths.includes(pathname) || 
            pathname.startsWith('/blog/') || 
            pathname.startsWith('/products/category/');

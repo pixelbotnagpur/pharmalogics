@@ -1,12 +1,17 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { PromoVideo } from '@/components/common/PromoVideo';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { HelpCircle, ShieldCheck, Lock } from 'lucide-react';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+
+const getImage = (id: string) => {
+  const img = PlaceHolderImages.find(p => p.id === id);
+  return img || { imageUrl: `https://picsum.photos/seed/${id}/1080/1080`, imageHint: "placeholder" };
+};
 
 const policyNavItems = [
   { label: 'Delivery & Returns', href: '/delivery-and-returns', active: false },
@@ -14,6 +19,7 @@ const policyNavItems = [
   { label: 'Privacy Policy', href: '/privacy-policy', active: true },
   { label: 'Cookie Policy', href: '/cookie-policy', active: false },
   { label: 'Contact', href: '/contact', active: false },
+  { label: 'FAQs', href: '/faqs', active: false },
 ];
 
 export default function PrivacyPolicyPage() {
@@ -55,7 +61,16 @@ export default function PrivacyPolicyPage() {
     <div className="bg-background min-h-screen">
       {/* Hero Section */}
       <section className="relative h-[60vh] w-full -mt-16 bg-primary overflow-hidden">
-        <PromoVideo />
+        <Image 
+          src={getImage('dosage_background').imageUrl} 
+          alt="Privacy Background" 
+          fill 
+          className="object-cover opacity-40 grayscale"
+          priority
+          data-ai-hint="abstract laboratory"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/40 to-transparent" />
+        
         <div className="relative z-20 h-full flex items-end justify-between text-left p-8 md:p-16">
           <div className="max-w-3xl">
             <p className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-white/80 mb-6 font-bold">DATA GOVERNANCE</p>

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -57,7 +56,7 @@ export default function BlogIndexPage() {
         <PromoVideo />
         <div className="relative z-20 h-full flex items-end justify-between text-left p-8 md:p-16">
           <div className="max-w-3xl">
-            <p className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-white/80 mb-6 font-bold">THE RESEARCH REGISTRY</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/80 mb-6 font-bold">THE RESEARCH REGISTRY</p>
             <h1 className="text-5xl md:text-7xl font-headline font-normal text-white leading-[1.1]">
               Clinical <br /> Insights.
             </h1>
@@ -114,7 +113,7 @@ export default function BlogIndexPage() {
             <p className="text-[10px] font-bold uppercase tracking-widest mt-4 opacity-40">Synchronizing Research registry...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <AnimatePresence mode="popLayout">
               {filteredPosts.map((post) => (
                 <motion.div

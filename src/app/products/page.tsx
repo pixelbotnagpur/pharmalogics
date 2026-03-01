@@ -13,10 +13,10 @@ import type { Product, Category, WebPage } from '@/lib/types';
 
 function ProductGridSkeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       {Array.from({ length: 8 }).map((_, i) => (
         <div key={i} className="flex flex-col space-y-4">
-          <Skeleton className="aspect-[3/4] w-full rounded-xl" />
+          <Skeleton className="aspect-square w-full rounded-xl" />
           <div className="space-y-2">
             <Skeleton className="h-4 w-3/4" />
             <Skeleton className="h-3 w-1/2" />
@@ -130,7 +130,7 @@ export default function ProductsPage() {
             ) : (
               <>
                 <TabsContent value="all" className="mt-0 focus-visible:outline-none focus-visible:ring-0">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {products?.map((product) => (
                       <ProductCard key={product.id} product={product} />
                     ))}
@@ -139,7 +139,7 @@ export default function ProductsPage() {
 
                 {categories?.map((category) => (
                   <TabsContent key={category.id} value={category.name} className="mt-0 focus-visible:outline-none focus-visible:ring-0">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                       {products
                         ?.filter((p) => p.category === category.name)
                         .map((product) => (

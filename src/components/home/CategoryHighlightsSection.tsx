@@ -3,11 +3,18 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
-import { Plus, Loader2 } from 'lucide-react';
+import { Plus, Loader2, ArrowRight } from 'lucide-react';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import type { Category } from '@/lib/types';
+import { SectionHeader } from '@/components/common/SectionHeader';
+import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
+/**
+ * @fileOverview CategoryHighlightsSection - A high-integrity taxonomy registry.
+ * Features an immersive square-module layout with dynamic data reveal on interaction.
+ */
 export function CategoryHighlightsSection() {
   const db = useFirestore();
   const categoriesRef = useMemoFirebase(() => collection(db, 'categories'), [db]);
@@ -16,47 +23,102 @@ export function CategoryHighlightsSection() {
   const displayCategories = categories?.slice(0, 4) || [];
 
   return (
-    <section className="bg-background py-12">
+    <section className="bg-background py-12 md:py-24" id="taxonomy">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 min-h-[300px]">
+        <SectionHeader 
+          index="05"
+          title="CLINICAL TAXONOMY"
+          description="Biological classification nodes for targeted human optimization."
+          ctaLabel="EXPLORE REGISTRY"
+          ctaHref="/products"
+          refId="REG.TAXONOMY.CORE"
+        />
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {isLoading ? (
-            <div className="col-span-full flex items-center justify-center">
-              <Loader2 className="h-8 w-8 animate-spin text-primary opacity-20" />
+            <div className="col-span-full py-20 flex items-center justify-center">
+              <Loader2 className="h-10 w-10 animate-spin text-primary opacity-20" />
             </div>
           ) : displayCategories.length > 0 ? (
             displayCategories.map((cat, i) => (
-              <Link key={cat.id} href={`/products/category/${cat.slug}`}>
-                <Card className="border-none shadow-none rounded-2xl overflow-hidden bg-white group cursor-pointer transition-all duration-500 hover:scale-[1.02] hover:shadow-xl hover:shadow-primary/5 h-full">
-                  <CardContent className="p-8 flex flex-col h-full relative">
-                    <div className="relative h-40 w-full mb-8 rounded-xl bg-muted/5 p-4 transition-colors group-hover:bg-muted/10">
-                      <Image 
-                        src={cat.imageSrc} 
-                        alt={cat.name} 
-                        fill 
-                        className="object-contain" 
-                        data-ai-hint={cat.imageHint}
-                      />
-                    </div>
+              <motion.div
+                key={cat.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+              >
+                <Link href={`/products/category/${cat.slug}`} className="group block">
+                  <Card className="relative aspect-square border border-border/40 shadow-none rounded-2xl bg-white overflow-hidden transition-all duration-500 hover:border-primary/30 group-hover:shadow-2xl group-hover:shadow-primary/5">
                     
-                    <div className="flex items-start justify-between gap-2 mb-4 h-[4.5rem]">
-                      <h3 className="text-3xl font-headline font-normal tracking-wide text-primary line-clamp-2">
-                        {cat.name.toUpperCase()}
-                      </h3>
-                      <div className="h-6 w-6 rounded-md bg-primary flex items-center justify-center shrink-0 mt-1">
-                        <Plus className="h-3 w-3 text-white" />
+                    {/* Visual Node - Initially Full Height, Reduces on Hover */}
+                    <div className={cn(
+                      "absolute top-0 left-0 w-full overflow-hidden transition-all duration-700 ease-clinical bg-primary/[0.02]",
+                      "h-full group-hover:h-1/2"
+                    )}>
+                      <div className="relative w-full h-full transition-all duration-700 ease-clinical">
+                        <Image 
+                          src={cat.imageSrc} 
+                          alt={cat.name} 
+                          fill 
+                          className="object-cover transition-transform duration-700 ease-clinical group-hover:scale-105" 
+                          data-ai-hint={cat.imageHint}
+                        />
+                      </div>
+                      
+                      {/* Technical Identifier Tag - Hidden on Hover */}
+                      <div className="absolute top-8 left-8 z-10 transition-opacity duration-500 group-hover:opacity-0">
+                        <div className="bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-primary/10 flex items-center gap-2">
+                          <div className="h-1 w-1 rounded-full bg-primary animate-pulse" />
+                          <span className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-primary">
+                            NODE.0{i + 1}
+                          </span>
+                        </div>
                       </div>
                     </div>
 
-                    <p className="text-sm text-muted-foreground font-light leading-relaxed line-clamp-2 min-h-[2.5rem]">
-                      {cat.description}
-                    </p>
-                  </CardContent>
-                </Card>
-              </Link>
+                    {/* Content Node - Revealed from Bottom with Clip-Path */}
+                    <div className={cn(
+                      "absolute bottom-0 left-0 w-full h-1/2 bg-white flex flex-col transition-all duration-700 ease-clinical border-t border-dashed border-primary/10",
+                      "[clip-path:polygon(0_100%,100%_100%,100%_100%,0_100%)]",
+                      "group-hover:[clip-path:polygon(0_0,100%_0,100%_100%,0_100%)]"
+                    )}>
+                      <CardContent className="p-6 flex-1 flex flex-col justify-between">
+                        {/* Identity Header */}
+                        <div className="space-y-2">
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="space-y-0.5">
+                              <p className="text-[8px] font-bold uppercase tracking-[0.3em] text-accent">Clinical Node</p>
+                              <h3 className="text-lg md:text-xl font-headline font-normal tracking-tight text-foreground leading-tight group-hover:text-primary transition-colors">
+                                {cat.name}
+                              </h3>
+                            </div>
+                            <div className="h-9 w-9 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-center shrink-0 transition-all duration-500 group-hover:bg-primary group-hover:text-white">
+                              <Plus className="h-4 w-4 transition-transform duration-500 group-hover:rotate-90" />
+                            </div>
+                          </div>
+
+                          <p className="text-[11px] md:text-xs text-muted-foreground font-light leading-relaxed line-clamp-3">
+                            {cat.description}
+                          </p>
+                        </div>
+
+                        {/* Registry Footer - Action Trigger */}
+                        <div className="pt-4 border-t border-dashed border-border/30 flex items-center justify-between group/footer">
+                          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-primary transition-all duration-500 group-hover/footer:translate-x-1">
+                            Explore Registry
+                          </span>
+                          <ArrowRight className="h-4 w-4 text-primary opacity-40 group-hover/footer:opacity-100 transition-all duration-500" />
+                        </div>
+                      </CardContent>
+                    </div>
+                  </Card>
+                </Link>
+              </motion.div>
             ))
           ) : (
-            <div className="col-span-full text-center py-12">
-              <p className="text-muted-foreground font-light italic">Taxonomy registry empty. Please initialize in Admin.</p>
+            <div className="col-span-full py-20 text-center bg-muted/10 rounded-3xl border border-dashed border-border/40">
+              <p className="text-sm text-muted-foreground font-light italic">Taxonomy registry node empty. Synchronizing...</p>
             </div>
           )}
         </div>

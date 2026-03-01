@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { 
   Accordion, 
   AccordionContent, 
@@ -13,6 +14,21 @@ import { useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import type { WebPage } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+
+const getImage = (id: string) => {
+  const img = PlaceHolderImages.find(p => p.id === id);
+  return img || { imageUrl: `https://picsum.photos/seed/${id}/1080/1080`, imageHint: "placeholder" };
+};
+
+const policyNavItems = [
+  { label: 'Delivery & Returns', href: '/delivery-and-returns', active: false },
+  { label: 'Terms & Conditions', href: '/terms-and-conditions', active: false },
+  { label: 'Privacy Policy', href: '/privacy-policy', active: false },
+  { label: 'Cookie Policy', href: '/cookie-policy', active: false },
+  { label: 'Contact', href: '/contact', active: false },
+  { label: 'FAQs', href: '/faqs', active: true },
+];
 
 export default function FaqsPage() {
   const db = useFirestore();
@@ -60,18 +76,56 @@ export default function FaqsPage() {
 
   return (
     <div className="bg-background min-h-screen">
-      <div className="container mx-auto px-4 py-16 md:py-24">
-        <div className="mb-16">
-          <p className="text-[10px] md:text-xs uppercase tracking-[0.3em] text-muted-foreground font-light mb-4">HAVE A QUESTION? FIND ANSWERS HERE</p>
-          <h1 className="text-5xl md:text-7xl font-headline font-normal text-foreground leading-[1.1]">Frequently Asked <br className="hidden md:block" /> Questions</h1>
+      {/* Hero Section */}
+      <section className="relative h-[60vh] w-full -mt-16 bg-primary overflow-hidden">
+        <Image 
+          src={getImage('dosage_background').imageUrl} 
+          alt="Support Background" 
+          fill 
+          className="object-cover opacity-40 grayscale"
+          priority
+          data-ai-hint="abstract laboratory"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/40 to-transparent" />
+        
+        <div className="relative z-20 h-full flex items-end justify-between text-left p-8 md:p-16">
+          <div className="max-w-3xl">
+            <p className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-white/80 mb-6 font-bold">SUPPORT REGISTRY</p>
+            <h1 className="text-5xl md:text-7xl font-headline font-normal text-white leading-[1.1]">Frequently Asked <br className="hidden md:block" /> Questions</h1>
+          </div>
+          <div className="hidden lg:flex items-center gap-1 bg-white/10 backdrop-blur-md p-1 rounded-full border border-white/20 mb-4">
+            {policyNavItems.map((item) => (
+              <Link 
+                key={item.label} 
+                href={item.href} 
+                className={cn(
+                  "px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all",
+                  item.active 
+                    ? "bg-primary text-white shadow-lg" 
+                    : "text-white/70 hover:text-white hover:bg-white/5"
+                )}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
         </div>
+      </section>
 
+      <div className="container mx-auto px-4 py-16 md:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-16 items-start">
           <div className="hidden lg:block lg:col-span-3 sticky top-24 z-20">
             <div className="bg-card rounded-xl p-2 border shadow-sm">
               <nav className="flex flex-col">
                 {faqData.map((section: any) => (
-                  <button key={section.id} onClick={() => scrollToSection(section.id)} className={cn("text-left px-6 py-4 text-sm font-light transition-all rounded-lg flex items-center gap-3", activeSection === section.id ? "bg-primary text-primary-foreground font-normal" : "text-muted-foreground hover:bg-muted")}>
+                  <button 
+                    key={section.id} 
+                    onClick={() => scrollToSection(section.id)} 
+                    className={cn(
+                      "text-left px-6 py-4 text-sm font-light transition-all rounded-lg flex items-center gap-3", 
+                      activeSection === section.id ? "bg-primary text-primary-foreground font-normal" : "text-muted-foreground hover:bg-muted"
+                    )}
+                  >
                     {activeSection === section.id && <div className="w-1.5 h-1.5 rounded-full bg-accent" />}
                     {section.title}
                   </button>

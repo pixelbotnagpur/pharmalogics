@@ -1,4 +1,3 @@
-
 'use client';
 
 import dynamic from 'next/dynamic';
@@ -47,7 +46,7 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
     <div className="relative min-h-screen">
       {/* Scrollable Site Layer */}
       <div className={cn(
-        "relative z-10 flex min-h-dvh flex-col pb-[60vh] md:pb-96 bg-transparent pointer-events-none"
+        "relative z-10 flex min-h-dvh flex-col pb-[100vh] md:pb-[450px] bg-transparent pointer-events-none"
       )}>
         {/* We restore pointer-events-auto for all interactive children of the scrollable layer */}
         <div className="pointer-events-auto">

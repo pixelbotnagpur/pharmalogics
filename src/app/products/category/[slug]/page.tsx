@@ -15,7 +15,7 @@ import { Loader2 } from 'lucide-react';
 
 function ProductGridSkeleton() {
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="flex flex-col space-y-3">
                     <Skeleton className="h-[250px] w-full rounded-xl" />
@@ -110,7 +110,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
             <p className="text-muted-foreground font-light uppercase tracking-[0.3em] text-[10px] font-bold mt-2">Targeted solutions for your vitality</p>
         </div>
         <Suspense fallback={<ProductGridSkeleton />}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {filteredProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                 ))}

@@ -5,8 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ModernAnimatedButton } from '@/components/ui/ModernAnimatedButton';
-import { ArrowRight, Calendar, Clock, Loader2 } from 'lucide-react';
+import { SectionHeader } from '@/components/common/SectionHeader';
+import { Calendar, Clock, Loader2, ArrowRight } from 'lucide-react';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy } from 'firebase/firestore';
 import type { Insight } from '@/lib/types';
@@ -14,14 +14,12 @@ import type { Insight } from '@/lib/types';
 export function BlogSection() {
   const db = useFirestore();
   
-  // Use a simple query to avoid composite index requirement for published/updatedAt
   const insightsQuery = useMemoFirebase(() => {
     return query(collection(db, 'insights'), orderBy('updatedAt', 'desc'));
   }, [db]);
 
   const { data: allInsights, isLoading } = useCollection<Insight>(insightsQuery);
 
-  // Perform filtering and limiting on the client to guarantee data flow
   const insights = useMemo(() => {
     if (!allInsights) return [];
     return allInsights
@@ -30,26 +28,23 @@ export function BlogSection() {
   }, [allInsights]);
 
   return (
-    <section className="py-12 md:py-24 bg-white" id="blog">
+    <section className="py-12 md:py-24 bg-white border-t border-border/10" id="blog">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-          <div className="max-w-xl">
-            <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary mb-4">LATEST RESEARCH</p>
-            <h2 className="text-4xl md:text-6xl font-headline font-normal leading-tight">Clinical Insights.</h2>
-          </div>
-          <div className="shrink-0">
-            <ModernAnimatedButton href="/blog" variant="accent">
-              VIEW ALL PROTOCOLS
-            </ModernAnimatedButton>
-          </div>
-        </div>
+        <SectionHeader 
+          index="08"
+          title="RESEARCH REGISTRY"
+          description="Peer-reviewed insights and biological optimization protocols."
+          ctaLabel="VIEW ALL PROTOCOLS"
+          ctaHref="/blog"
+          refId="LAB.INSIGHTS.NODE"
+        />
 
         {isLoading ? (
           <div className="py-20 text-center">
             <Loader2 className="h-8 w-8 animate-spin text-primary opacity-20 mx-auto" />
           </div>
         ) : insights && insights.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {insights.map((post) => (
               <Link key={post.id} href={`/blog/${post.id}`} className="group">
                 <Card className="border-none shadow-none bg-transparent overflow-hidden rounded-none h-full flex flex-col">

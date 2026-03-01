@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { PromoVideo } from '@/components/common/PromoVideo';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,6 +13,12 @@ import { Mail, MapPin, Clock, ArrowRight, Building2, Globe, Loader2 } from 'luci
 import { useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import type { WebPage } from '@/lib/types';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+
+const getImage = (id: string) => {
+  const img = PlaceHolderImages.find(p => p.id === id);
+  return img || { imageUrl: `https://picsum.photos/seed/${id}/1080/1080`, imageHint: "placeholder" };
+};
 
 const ICON_MAP: Record<string, any> = {
   'Email Support': Mail,
@@ -27,6 +33,7 @@ const policyNavItems = [
   { label: 'Privacy Policy', href: '/privacy-policy', active: false },
   { label: 'Cookie Policy', href: '/cookie-policy', active: false },
   { label: 'Contact', href: '/contact', active: true },
+  { label: 'FAQs', href: '/faqs', active: false },
 ];
 
 export default function ContactPage() {
@@ -49,7 +56,16 @@ export default function ContactPage() {
   return (
     <div className="bg-background min-h-screen">
       <section className="relative h-[60vh] w-full -mt-16 bg-primary overflow-hidden">
-        <PromoVideo />
+        <Image 
+          src={getImage('dosage_background').imageUrl} 
+          alt="Contact Background" 
+          fill 
+          className="object-cover opacity-40 grayscale"
+          priority
+          data-ai-hint="abstract laboratory"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/40 to-transparent" />
+        
         <div className="relative z-20 h-full flex items-end justify-between text-left p-8 md:p-16">
           <div className="max-w-3xl">
             <p className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-white/80 mb-6 font-bold">{content.hero.label}</p>
@@ -57,7 +73,16 @@ export default function ContactPage() {
           </div>
           <div className="hidden lg:flex items-center gap-1 bg-white/10 backdrop-blur-md p-1 rounded-full border border-white/20 mb-4">
             {policyNavItems.map((item) => (
-              <Link key={item.label} href={item.href} className={cn("px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all", item.active ? "bg-primary text-white shadow-lg" : "text-white/70 hover:text-white hover:bg-white/5")}>{item.label}</Link>
+              <Link 
+                key={item.label} 
+                href={item.href} 
+                className={cn(
+                  "px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all", 
+                  item.active ? "bg-primary text-white shadow-lg" : "text-white/70 hover:text-white hover:bg-white/5"
+                )}
+              >
+                {item.label}
+              </Link>
             ))}
           </div>
         </div>

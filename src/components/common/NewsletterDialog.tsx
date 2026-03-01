@@ -26,29 +26,37 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 /**
  * @fileOverview A landscape Membership Enrollment Dialogue for first-time visitors.
  * Outlines clinical benefits and handles newsletter synchronization.
+ * 
+ * Optimized: Disabled for mobile and delayed for desktop (20s).
  */
 export function NewsletterDialog() {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [agreed, setAccepted] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const isMobile = useIsMobile();
 
   const heroImage = PlaceHolderImages.find(p => p.id === 'why_exist_3');
 
   useEffect(() => {
+    // Protocol Check: Do not initialize for mobile devices
+    if (isMobile) return;
+
     // Check persistence registry
     const hasSeen = localStorage.getItem('pharmlogics_membership_prompt');
     if (!hasSeen) {
+      // Strategic Delay: 20 seconds for larger screens
       const timer = setTimeout(() => {
         setOpen(true);
-      }, 2500);
+      }, 20000);
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [isMobile]);
 
   const handleClose = () => {
     localStorage.setItem('pharmlogics_membership_prompt', 'true');
@@ -64,6 +72,9 @@ export function NewsletterDialog() {
       setTimeout(() => setOpen(false), 3000);
     }
   };
+
+  // Do not render on mobile nodes
+  if (isMobile) return null;
 
   const benefits = [
     { icon: Zap, title: "15% Clinical Savings", desc: "Persistent discount on all protocols." },

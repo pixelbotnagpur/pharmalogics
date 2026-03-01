@@ -22,7 +22,7 @@ export function BundlePackSection() {
 
   if (isLoading) {
     return (
-      <section className="bg-background py-12 md:py-16">
+      <section className="bg-background pt-12 md:pt-24 pb-12 md:pb-16">
         <div className="container mx-auto px-4 h-[500px] flex items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary opacity-20" />
         </div>
@@ -36,25 +36,25 @@ export function BundlePackSection() {
   const displayDesc = bundle?.description || 'Kickstart your wellness journey with our curated selection of essential supplements.';
 
   return (
-    <section className="bg-background py-12 md:py-16">
+    <section className="bg-background pt-12 md:pt-24 pb-12 md:pb-16">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-10 gap-8 items-stretch">
           
-          {/* Left Column: Image */}
-          <div className="lg:col-span-7 relative aspect-[14/9] w-full rounded-2xl overflow-hidden bg-primary shadow-none">
+          {/* Left Column: Image - Reduced from col-span-7 to col-span-6 */}
+          <div className="lg:col-span-6 relative aspect-[14/9] w-full rounded-3xl overflow-hidden bg-primary shadow-none">
             <Image
               src={displayImage}
               alt={displayTitle}
               fill
               className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 70vw"
+              sizes="(max-width: 1024px) 100vw, 60vw"
               data-ai-hint="supplement bundle"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent" />
           </div>
 
-          {/* Right Column: Content */}
-          <div className="lg:col-span-3 flex flex-col py-8 lg:py-0">
+          {/* Right Column: Content - Increased from col-span-3 to col-span-4 with white background */}
+          <div className="lg:col-span-4 flex flex-col p-8 md:p-12 lg:p-16 bg-white rounded-3xl">
             {/* Top Aligned Content */}
             <div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">THE ULTIMATE PROTOCOL</p>

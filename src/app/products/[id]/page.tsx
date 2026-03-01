@@ -1,4 +1,3 @@
-
 "use client";
 
 import { use, useState, useEffect, useRef, useMemo } from 'react';
@@ -244,7 +243,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <p className="text-sm uppercase tracking-widest text-muted-foreground">Recommendation</p>
               <h2 className="text-4xl md:text-5xl font-headline font-normal mt-2">You might like these</h2>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {bottomRelatedProducts.map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}

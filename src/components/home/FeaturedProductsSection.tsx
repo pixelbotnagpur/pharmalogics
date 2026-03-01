@@ -3,7 +3,7 @@
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import { ProductCard } from '@/components/product/ProductCard';
-import { ModernAnimatedButton } from '@/components/ui/ModernAnimatedButton';
+import { SectionHeader } from '@/components/common/SectionHeader';
 import type { Product } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
 
@@ -12,28 +12,21 @@ export function FeaturedProductsSection() {
   const productsRef = useMemoFirebase(() => collection(db, 'products'), [db]);
   const { data: products, isLoading } = useCollection<Product>(productsRef);
 
-  // Show the first 4 products from the live database
   const featuredProducts = products?.filter(p => p.category !== 'Bundles').slice(0, 4) || [];
 
   return (
-    <section className="py-12 md:py-16 bg-background">
+    <section className="pt-12 md:pt-24 pb-0 bg-background border-t border-border/10">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between items-start mb-12 gap-4">
-          <div>
-            <p className="text-sm uppercase tracking-widest text-muted-foreground font-bold">Featured Products</p>
-            <h2 className="text-3xl md:text-4xl font-headline font-normal mt-2">Shop by solution</h2>
-          </div>
-          <div className="md:text-right max-w-lg">
-              <p className="text-lg text-muted-foreground font-light">
-                Explore our curated solutions for your specific health goals.
-              </p>
-               <ModernAnimatedButton href="/products" className="mt-4">
-                  Shop All
-               </ModernAnimatedButton>
-          </div>
-        </div>
+        <SectionHeader 
+          index="01"
+          title="CURATED SOLUTIONS"
+          description="High-Bioavailability formulas designed for specific health outcomes."
+          ctaLabel="SHOP FULL CATALOG"
+          ctaHref="/products"
+          refId="REG.CATALOG.INFRA"
+        />
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 min-h-[400px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 min-h-[400px]">
           {isLoading ? (
             <div className="col-span-full flex items-center justify-center py-20">
               <Loader2 className="h-8 w-8 animate-spin text-primary opacity-20" />
