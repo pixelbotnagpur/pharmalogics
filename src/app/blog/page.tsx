@@ -21,14 +21,13 @@ export default function BlogIndexPage() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // Fetch all insights ordered by date to avoid composite index requirements for the public view
+  // Fetch all insights ordered by date
   const insightsQuery = useMemoFirebase(() => {
     return query(collection(db, 'insights'), orderBy('updatedAt', 'desc'));
   }, [db]);
   
   const { data: allInsights, isLoading } = useCollection<Insight>(insightsQuery);
 
-  // Client-side filter for published status and category selection
   const insights = useMemo(() => {
     if (!allInsights) return [];
     return allInsights.filter(post => post.published);
@@ -68,7 +67,7 @@ export default function BlogIndexPage() {
         </div>
       </section>
 
-      <div className="container mx-auto px-4 py-16 md:py-24">
+      <div className="container mx-auto px-4 pt-8 md:pt-12 pb-16 md:pb-24">
         <Breadcrumbs items={breadcrumbItems} className="mb-12" />
         
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
@@ -127,19 +126,28 @@ export default function BlogIndexPage() {
                   <Link href={`/blog/${post.id}`} className="group">
                     <Card className="border-none shadow-none bg-transparent overflow-hidden rounded-none h-full flex flex-col">
                       <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl mb-8">
+                        {/* Base Layer: High-integrity Grayscale */}
                         <Image 
                           src={post.imageUrl || `https://picsum.photos/seed/${post.id}/800/500`} 
                           alt={post.title} 
                           fill 
-                          className="object-cover transition-transform duration-1000 group-hover:scale-110 grayscale hover:grayscale-0"
+                          className="object-cover grayscale transition-transform duration-1000 group-hover:scale-110"
                           data-ai-hint={post.imageHint}
                         />
-                        <div className="absolute top-4 left-4 flex flex-col gap-2">
+                        
+                        {/* Reveal Layer: Clinical Color Reveal from Left to Right */}
+                        <div className="absolute inset-0 transition-all duration-700 ease-clinical [clip-path:inset(0_100%_0_0)] group-hover:[clip-path:inset(0_0_0_0)] overflow-hidden">
+                          <Image 
+                            src={post.imageUrl || `https://picsum.photos/seed/${post.id}/800/500`} 
+                            alt={post.title} 
+                            fill 
+                            className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                          />
+                        </div>
+
+                        <div className="absolute top-4 left-4 z-20">
                           <Badge variant="accent" className="text-[8px] font-bold uppercase tracking-[0.2em] px-3 py-1.5 shadow-lg border-none">
                             {post.category}
-                          </Badge>
-                          <Badge variant="outline" className="bg-black/40 backdrop-blur-md text-white border-white/20 text-[7px] font-bold px-2 py-1">
-                            NODE: {post.id}
                           </Badge>
                         </div>
                       </div>

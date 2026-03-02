@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -9,7 +8,6 @@ import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle 
 import { Card, CardContent } from '@/components/ui/card';
 import { Menu, Plus, Search, X } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
-import { CartSheet } from '@/components/cart/CartSheet';
 import { cn } from '@/lib/utils';
 import type { Product } from '@/lib/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -197,8 +195,6 @@ export function MobileHeader({
           >
             <span>[<span>{itemCount}</span>]</span>
           </Button>
-          
-          <CartSheet />
       </div>
     </div>
   );

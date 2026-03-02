@@ -1,4 +1,3 @@
-
 import { doc, writeBatch, Firestore } from 'firebase/firestore';
 import { PlaceHolderImages } from './placeholder-images';
 
@@ -30,7 +29,8 @@ export async function initializeClinicalRegistry(db: Firestore) {
         title: "Elevate Your Wellness Journey",
         description: "Discover premium, science-backed supplements designed for your health goals. Natural, potent, and pure.",
         ctaLabel: "Shop All Products",
-        ctaHref: "/products"
+        ctaHref: "/products",
+        bgImageUrl: "" // Provisioned for future dynamic sync
       },
       narrative: {
         label: "WHY WE EXIST",
@@ -42,6 +42,7 @@ export async function initializeClinicalRegistry(db: Firestore) {
       science: {
         label: "THE SCIENCE",
         title: "Clinical Grade Bioavailability",
+        visualUrl: "", // New dynamic visual node
         points: [
           { title: 'Peak Bioavailability', description: "Our formulas are designed for maximum absorption. We use chelated minerals and activated vitamins." },
           { title: 'Synergistic Formulations', description: "We don't just pack ingredients together; we pair them intelligently." },
@@ -55,6 +56,8 @@ export async function initializeClinicalRegistry(db: Firestore) {
         description: "Our formulas are developed and endorsed by healthcare professionals to ensure safety and efficacy.",
         quote: "Pharmlogics reimagines the benefits of IV therapy in an oral, fast-absorbing format. It delivers highly bioavailable nutrients that fuel cellular health, support hydration, and enhance cognitive performance.",
         author: "Brooke Aaron, MS, RDN, LDN",
+        avatarUrl: "",
+        mainImageUrl: "",
         avatarId: "brooke_aaron_avatar",
         mainImageId: "medically_proven_runner"
       },
@@ -63,6 +66,8 @@ export async function initializeClinicalRegistry(db: Firestore) {
         description: "Get the benefits of highly bioavailable nutrients in a simple, daily capsule.",
         bgImageId: "dosage_background",
         personImageId: "dosage_person",
+        bgImageUrl: "",
+        personImageUrl: "",
         rows: [
           { feature: 'Safe for Daily Use', capsule: 'Yes', iv: 'No' },
           { feature: 'No Needles, No Discomfort', capsule: 'Yes', iv: 'No' },
@@ -100,7 +105,8 @@ export async function initializeClinicalRegistry(db: Firestore) {
       hero: {
         label: "THE PHARMLOGICS CATALOG",
         title: "Pure clinical excellence.",
-        description: "Explore our curated selection of science-backed formulas designed for your specific health goals. High-bioavailability human optimization."
+        description: "Explore our curated selection of science-backed formulas designed for your specific health goals. High-bioavailability human optimization.",
+        bgImageUrl: ""
       }
     }
   }, { merge: true });
@@ -121,7 +127,7 @@ export async function initializeClinicalRegistry(db: Firestore) {
       published: true,
       content: [
         "Chelated magnesium represents a significant leap in nutritional pharmacology. By binding magnesium to glycine, we create a stable, neutral molecule that navigates the intestinal wall via amino acid pathways, bypassing the common absorption barriers of inorganic salts.",
-        "Our recent double-blind study observed a 42% increase in serum magnesium levels compared to standard citrate protocols. This increased bioavailability correlates directly with improved parasympathetic activation during the deep sleep phase.",
+        "Our recent double-blind study observed a 42% increase in serum magnesium levels compared to standard charset protocols. This increased bioavailability correlates directly with improved parasympathetic activation during the deep sleep phase.",
         "Future optimization protocols will focus on the synergistic pairing of these chelates with L-Theanine to further enhance cognitive restoration during rest cycles."
       ]
     },
@@ -202,6 +208,72 @@ export async function initializeClinicalRegistry(db: Firestore) {
     currencySymbol: '$',
     freeShippingThreshold: 50.0,
     updatedAt: new Date().toISOString()
+  }, { merge: true });
+
+  // 6. Initialize About Page
+  const aboutRef = doc(db, 'pages', 'about');
+  batch.set(aboutRef, {
+    id: 'about',
+    title: 'About Pharmlogics',
+    updatedAt: new Date().toISOString(),
+    content: {
+      hero: {
+        missionLabel: "OUR MISSION",
+        title: "Engineering the Future of Wellness.",
+        description: "We've combined the rigor of pharmaceutical standards with the wisdom of botanical medicine to create a new category: High-Bioavailability Human Optimization.",
+        bgImageUrl: ""
+      },
+      story: {
+        label: "OUR STORY",
+        title: "Bridging the gap between pharmaceutical rigor and botanical potential.",
+        paragraphs: [
+          "Pharmlogics was born from a singular observation: the supplement industry was broken. For decades, consumers have been forced to choose between the cold precision of synthetic medicine and the often-unproven promises of natural wellness. We saw an opportunity to build a bridge.",
+          "Founded by Dr. Elena Thorne, a clinical researcher with a background in molecular biology, Pharmlogics is built on the principle of High-Bioavailability. It’s not just about what you ingest; it’s about what your cells actually absorb."
+        ],
+        quote: "Pharmlogics is built for those who refuse to compromise on their biology. We are the architects of your vitality.",
+        author: "Dr. Elena Thorne, Founder"
+      },
+      values: {
+        label: "OUR VALUES",
+        items: [
+          { title: 'FOCUS', description: 'Precision formulas designed for cognitive clarity.', iconId: 'value_abstract_1' },
+          { title: 'VITALITY', description: 'Fueling cellular energy and metabolic health.', iconId: 'value_abstract_2' },
+          { title: 'IMMUNITY', description: 'Strengthening your biological defenses.', iconId: 'value_abstract_3' },
+          { title: 'MOBILITY', description: 'Supporting joint integrity and recovery.', iconId: 'why_exist_1' },
+        ]
+      },
+      ethos: {
+        label: "OUR ETHOS OF IMPACT",
+        title: "Intentionally sourced. Scientifically sustained.",
+        imageUrl: "",
+        items: [
+          { title: 'Sourced with Intention', content: 'We select our raw materials from global FDA-registered facilities.' },
+          { title: 'Lightweight Pouch Design', content: 'Our signature flexible pouches use 80% less plastic.' }
+        ]
+      },
+      editorial: {
+        title: "Clinical & Nutritional Oversight",
+        content: "Trust is our most important ingredient. Every Pharmlogics formula undergoes rigorous review by our lead nutritionist, Brooke Aaron (MS, RDN, LDN), alongside our clinical research team."
+      },
+      community: {
+        label: "WE ARE PHARMLOGICS",
+        title: "We see you.",
+        imageUrl: "",
+        paragraphs: [
+          "You’re the high-performer who demands more. Pharmlogics doesn't exist just to sell bottles; we exist to fuel that journey."
+        ],
+        ctaLabel: "EXPLORE OUR FORMULAS",
+        ctaHref: "/products"
+      },
+      contact: {
+        title: "How can we help your journey?",
+        disclaimer: "*These statements have not been evaluated by the Food and Drug Administration."
+      },
+      seo: {
+        title: "Our Story and Science",
+        description: "Learn how Pharmlogics is engineering the future of wellness through high-bioavailability formulas."
+      }
+    }
   }, { merge: true });
 
   return batch.commit();

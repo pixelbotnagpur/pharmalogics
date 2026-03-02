@@ -52,7 +52,7 @@ import { signOut } from "firebase/auth";
 import { useAuth } from "@/firebase";
 import { doc, collection, query, where } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
-import type { UserProfile, Order } from "@/lib/types";
+import type { UserProfile, Order, StoreSettings } from "@/lib/types";
 import { NotificationBell } from "@/components/common/NotificationBell";
 
 type AdminRoleType = 'Super Admin' | 'Content Manager' | 'Logistics Staff' | null;
@@ -157,6 +157,10 @@ export default function AdminLayout({
     
     const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
     const [isOnline, setIsOnline] = useState(true);
+
+    const settingsRef = useMemoFirebase(() => doc(db, 'settings', 'store'), [db]);
+    const { data: settings } = useDoc<StoreSettings>(settingsRef);
+    const storeName = settings?.storeName || 'Clinical Brand';
 
     // Monitoring connectivity
     useEffect(() => {
@@ -333,7 +337,7 @@ export default function AdminLayout({
                 <SidebarTrigger className="text-muted-foreground hover:text-primary transition-colors" />
                 <div className="h-4 w-px bg-border mx-2 hidden sm:block" />
                 <h2 className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] sm:tracking-[0.3em] text-muted-foreground truncate max-w-[150px] sm:max-w-none">
-                    Clinical Administration Unit
+                    {storeName} Management
                 </h2>
                 <div className="ml-auto flex items-center gap-4">
                     <NotificationBell variant="dark" />

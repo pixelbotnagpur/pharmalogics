@@ -7,14 +7,18 @@ import { Button } from '@/components/ui/button';
 import { ArrowUpRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection } from 'firebase/firestore';
-import type { Category } from '@/lib/types';
+import { useCollection, useFirestore, useMemoFirebase, useDoc } from '@/firebase';
+import { collection, doc } from 'firebase/firestore';
+import type { Category, StoreSettings } from '@/lib/types';
 
-const backgroundImage = PlaceHolderImages.find(p => p.id === 'mega_menu_bg') || { imageUrl: 'https://picsum.photos/seed/mega_menu_bg/1920/1080', imageHint: 'abstract background' };
+const defaultBg = PlaceHolderImages.find(p => p.id === 'mega_menu_bg') || { imageUrl: 'https://picsum.photos/seed/mega_menu_bg/1920/1080', imageHint: 'abstract background' };
 
 export function BottomMegaMenu() {
   const db = useFirestore();
+  
+  const settingsRef = useMemoFirebase(() => doc(db, 'settings', 'store'), [db]);
+  const { data: settings, isLoading } = useDoc<StoreSettings>(settingsRef);
+
   const categoriesQuery = useMemoFirebase(() => collection(db, 'categories'), [db]);
   const { data: categories } = useCollection<Category>(categoriesQuery);
 
@@ -25,19 +29,42 @@ export function BottomMegaMenu() {
     { href: "#", label: "Subscription Service" },
   ];
 
+  // Logic: Avoid flash by not pre-calculating the URL with a fallback until we know the dynamic state
+  const bgUrl = settings ? (settings.megaMenuBgUrl || defaultBg.imageUrl) : null;
+  const isVideo = bgUrl?.endsWith('.mp4') || bgUrl?.includes('video/upload');
+
   return (
     <div
-      className="fixed bottom-0 inset-x-0 z-0 h-screen flex flex-col justify-end bg-primary"
+      className="fixed bottom-0 inset-x-0 z-0 h-screen flex flex-col justify-end bg-primary overflow-hidden"
     >
-        <Image
-        src={backgroundImage.imageUrl}
-        alt="Abstract background"
-        fill
-        className="object-cover"
-        data-ai-hint={backgroundImage.imageHint}
-        sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-primary/50" />
+        {/* Background Media - Only rendered once synchronization is complete */}
+        {!isLoading && bgUrl && (
+          <>
+            {isVideo ? (
+              <video 
+                src={bgUrl} 
+                autoPlay 
+                loop 
+                muted 
+                playsInline 
+                className="absolute top-0 left-0 w-full h-full object-cover" 
+              />
+            ) : (
+              <Image
+                src={bgUrl}
+                alt="Floor-layer background"
+                fill
+                className="object-cover"
+                data-ai-hint="abstract background"
+                sizes="100vw"
+                priority={false}
+              />
+            )}
+          </>
+        )}
+        
+        {/* Secondary Color Overlay Registry */}
+        <div className="absolute inset-0 bg-secondary/80" />
 
         <div className="relative z-10 overflow-y-auto max-h-screen w-full" data-lenis-prevent>
             <div className="container mx-auto px-4 pt-8 pb-10 md:pt-12 md:pb-16 h-full flex flex-col justify-center">
@@ -52,17 +79,17 @@ export function BottomMegaMenu() {
                     </div>
                 </div>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 mt-2 md:mt-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mt-2 md:mt-4">
                     {categories?.slice(0, 4).map((category) => (
-                    <Link key={category.id} href={`/products/category/${category.slug}`} className="group/button block">
+                    <Link key={category.id} href={`/products/category/${category.slug}`} className="group/button block min-w-0">
                         <Card className="overflow-hidden h-full bg-black/20 rounded-lg border-0 shadow-none group-hover/button:bg-black/40 transition-colors">
-                            <CardContent className="p-3 md:p-5 flex flex-row md:flex-col items-center md:items-stretch gap-4 md:gap-5 h-full">
-                                <div className="flex items-center justify-between flex-1 md:flex-initial">
-                                    <div className="relative w-10 h-10 md:w-16 md:h-16 flex-shrink-0">
-                                        <Image src={category.imageSrc} alt={category.name} fill className="object-contain" data-ai-hint={category.imageHint} sizes="64px" />
+                            <CardContent className="p-4 md:p-5 flex flex-col items-start md:items-stretch gap-4 md:gap-5 h-full">
+                                <div className="flex items-center justify-between w-full">
+                                    <div className="relative w-14 h-14 md:w-24 md:h-24 flex-shrink-0">
+                                        <Image src={category.imageSrc} alt={category.name} fill className="object-contain" data-ai-hint={category.imageHint} sizes="96px" />
                                     </div>
                                     <div className={cn(
-                                        "hidden md:flex flex-shrink-0 rounded-md h-7 w-7 md:h-8 md:w-8 items-center justify-center bg-accent text-accent-foreground transition-colors duration-300",
+                                        "flex flex-shrink-0 rounded-md h-7 w-7 md:h-8 md:w-8 items-center justify-center bg-accent text-accent-foreground transition-colors duration-300",
                                         "group-hover/button:bg-accent/90"
                                     )}>
                                         <span className="relative inline-block overflow-hidden h-4 w-4">
@@ -71,14 +98,11 @@ export function BottomMegaMenu() {
                                         </span>
                                     </div>
                                 </div>
-                                <div className="space-y-0.5 md:space-y-1.5 flex-1">
-                                    <h4 className="font-headline text-base md:text-xl font-normal text-white leading-tight">{category.name}</h4>
+                                <div className="space-y-0.5 md:space-y-1.5 flex-1 min-w-0 w-full">
+                                    <h4 className="font-headline text-sm md:text-xl font-normal text-white leading-tight truncate">{category.name}</h4>
                                     <p className="text-[8px] md:text-[10px] text-white/80 uppercase tracking-widest leading-relaxed line-clamp-1 md:line-clamp-none">
                                         {category.description}
                                     </p>
-                                </div>
-                                <div className="md:hidden">
-                                    <ArrowUpRight className="h-4 w-4 text-accent" />
                                 </div>
                             </CardContent>
                         </Card>

@@ -92,6 +92,7 @@ export default function AboutPage() {
   };
 
   // Transform value items to resolve icon objects from IDs if necessary
+  // Priorities: Custom uploaded icon (CMS) > Static iconId (Seeding) > Default fallback
   const processedValueItems = (content.values.items || []).map((item: any) => ({
     ...item,
     icon: item.icon || (item.iconId ? getImage(item.iconId) : getImage('value_abstract_1'))
@@ -105,6 +106,9 @@ export default function AboutPage() {
     );
   }
 
+  const ethosImage = content.ethos.imageUrl ? { imageUrl: content.ethos.imageUrl, imageHint: 'clinical ethos' } : getImage('ethos_leaf');
+  const communityImage = content.community.imageUrl ? { imageUrl: content.community.imageUrl, imageHint: 'community' } : getImage('why_exist_2');
+
   return (
     <div className="flex flex-col bg-[#F5F2ED] text-foreground min-h-screen">
       <AboutHero 
@@ -112,6 +116,7 @@ export default function AboutPage() {
         title={content.hero.title}
         description={content.hero.description}
         links={commitmentLinks}
+        bgImageUrl={content.hero.bgImageUrl}
       />
 
       <OurStory 
@@ -119,14 +124,14 @@ export default function AboutPage() {
         title={content.story.title}
         paragraphs={content.story.paragraphs}
         quote={content.story.quote}
-        author={content.story.author}
+        author={content.author}
       />
 
       <EthosOfImpact 
         label={content.ethos.label}
         title={content.ethos.title}
         items={content.ethos.items}
-        image={getImage('ethos_leaf')}
+        image={ethosImage}
       />
 
       <ValuesGrid 
@@ -143,7 +148,7 @@ export default function AboutPage() {
         label={content.community.label}
         title={content.community.title}
         paragraphs={content.community.paragraphs}
-        image={getImage('why_exist_2')}
+        image={communityImage}
         ctaLabel={content.community.ctaLabel}
         ctaHref={content.community.ctaHref}
       />

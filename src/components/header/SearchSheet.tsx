@@ -8,13 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Search, X, Plus } from 'lucide-react';
-import { products, bundles } from '@/lib/data';
+import { Search, X, Plus, Loader2 } from 'lucide-react';
 import type { Product, StoreSettings } from '@/lib/types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useFirestore, useDoc, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { useFirestore, useDoc, useMemoFirebase, useCollection } from '@/firebase';
+import { doc, collection } from 'firebase/firestore';
 
 interface SearchSheetProps {
   isOpen: boolean;
@@ -23,26 +22,37 @@ interface SearchSheetProps {
   handleAddToCart: (product: Product) => void;
 }
 
-export function SearchSheet({ isOpen, onOpenChange, popularProducts, handleAddToCart }: SearchSheetProps) {
+export function SearchSheet({ isOpen, onOpenChange, popularProducts: staticPopular, handleAddToCart }: SearchSheetProps) {
   const router = useRouter();
   const isMobile = useIsMobile();
   const db = useFirestore();
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Synchronize with Store Registry for Currency
   const settingsRef = useMemoFirebase(() => doc(db, 'settings', 'store'), [db]);
   const { data: settings } = useDoc<StoreSettings>(settingsRef);
   const currencySymbol = settings?.currencySymbol || '$';
 
-  const allItems = useMemo(() => [...products, ...bundles], []);
+  // Synchronize with Product Registry (Dynamic Node)
+  const productsQuery = useMemoFirebase(() => collection(db, 'products'), [db]);
+  const { data: allProducts, isLoading } = useCollection<Product>(productsQuery);
 
   const filteredItems = useMemo(() => {
-    if (!searchQuery.trim()) return [];
-    return allItems.filter(item => 
+    if (!searchQuery.trim() || !allProducts) return [];
+    return allProducts.filter(item => 
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.description.toLowerCase().includes(searchQuery.toLowerCase())
     ).slice(0, 6);
-  }, [searchQuery, allItems]);
+  }, [searchQuery, allProducts]);
+
+  // Derived Popular Products Node: Prioritizes Dynamic Data from Registry
+  const popularProducts = useMemo(() => {
+    if (allProducts && allProducts.length > 0) {
+      return allProducts.slice(0, 3);
+    }
+    return staticPopular; // Fallback to static if registry is empty/loading
+  }, [allProducts, staticPopular]);
 
   const onClose = () => {
     onOpenChange(false);
@@ -57,7 +67,7 @@ export function SearchSheet({ isOpen, onOpenChange, popularProducts, handleAddTo
 
   if (isMobile === undefined) return null;
   
-  const content = (
+  const searchResultsContent = (
     <div className="container mx-auto">
       <div className="relative mb-8">
         <Input
@@ -68,7 +78,11 @@ export function SearchSheet({ isOpen, onOpenChange, popularProducts, handleAddTo
           autoFocus
         />
         <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-2">
-          <Search className="h-6 w-6 text-muted-foreground" />
+          {isLoading ? (
+            <Loader2 className="h-5 w-5 animate-spin text-primary opacity-40" />
+          ) : (
+            <Search className="h-6 w-6 text-muted-foreground" />
+          )}
           {!isMobile && (
             <Button variant="ghost" size="icon" className="text-muted-foreground hover:bg-accent hover:text-accent-foreground" onClick={onClose}>
               <X className="h-5 w-5"/>
@@ -79,7 +93,7 @@ export function SearchSheet({ isOpen, onOpenChange, popularProducts, handleAddTo
 
       <div className="mt-8">
         <h4 className="text-sm uppercase tracking-widest text-muted-foreground">
-          {searchQuery ? 'Search Results' : 'Popular Products'}
+          {searchQuery ? 'Search Results' : 'Popular Protocols'}
         </h4>
         <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
           {(searchQuery ? filteredItems : popularProducts).map((item) => (
@@ -89,11 +103,11 @@ export function SearchSheet({ isOpen, onOpenChange, popularProducts, handleAddTo
               onClick={() => handleItemClick(item)}
             >
               <CardContent className="p-3 flex items-center gap-4 h-full">
-                <div className="relative w-16 h-16 flex-shrink-0">
-                  <Image src={item.imageUrl} alt={item.name} fill className="object-contain" data-ai-hint={item.imageHint} sizes="64px" />
+                <div className="relative w-16 h-16 flex-shrink-0 bg-muted/10 rounded-md overflow-hidden">
+                  <Image src={item.imageUrl} alt={item.name} fill className="object-contain p-1" data-ai-hint={item.imageHint} sizes="64px" />
                 </div>
-                <div className="flex-1">
-                  <h4 className="font-headline text-lg font-normal leading-tight">{item.name}</h4>
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-headline text-lg font-normal leading-tight truncate">{item.name}</h4>
                   <p className="text-xs text-muted-foreground uppercase tracking-widest">{currencySymbol}{item.price.toFixed(2)}</p>
                 </div>
                 <Button
@@ -110,9 +124,9 @@ export function SearchSheet({ isOpen, onOpenChange, popularProducts, handleAddTo
               </CardContent>
             </Card>
           ))}
-          {searchQuery && filteredItems.length === 0 && (
-            <div className="col-span-full py-12 text-center text-muted-foreground">
-              No results found for "{searchQuery}"
+          {searchQuery && !isLoading && filteredItems.length === 0 && (
+            <div className="col-span-full py-12 text-center text-muted-foreground italic font-light">
+              No clinical records found for "{searchQuery}"
             </div>
           )}
         </div>
@@ -125,7 +139,7 @@ export function SearchSheet({ isOpen, onOpenChange, popularProducts, handleAddTo
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
         <SheetContent side="left" className="bg-background text-foreground p-0 w-full">
           <SheetHeader className="p-4 border-b border-border h-16 flex flex-row items-center justify-between">
-            <SheetTitle>Search</SheetTitle>
+            <SheetTitle>Search Registry</SheetTitle>
             <SheetClose asChild>
               <Button variant="ghost" size="icon" className="text-muted-foreground">
                 <X className="h-5 w-5" />
@@ -133,7 +147,7 @@ export function SearchSheet({ isOpen, onOpenChange, popularProducts, handleAddTo
             </SheetClose>
           </SheetHeader>
           <ScrollArea className="h-[calc(100vh-4rem)] p-4">
-            {content}
+            {searchResultsContent}
           </ScrollArea>
         </SheetContent>
       </Sheet>
@@ -151,7 +165,7 @@ export function SearchSheet({ isOpen, onOpenChange, popularProducts, handleAddTo
           onClick={(e) => e.stopPropagation()}
         >
           <div className="px-8 pt-12 pb-8">
-            {content}
+            {searchResultsContent}
           </div>
         </motion.div>
       )}

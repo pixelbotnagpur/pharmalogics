@@ -21,7 +21,7 @@ export function OurStory({ label, title, paragraphs, quote, author }: OurStoryPr
           <p className="text-[10px] uppercase tracking-[0.4em] text-muted-foreground font-bold mb-6">
             {label}
           </p>
-          <h2 className="text-3xl md:text-5xl font-headline font-normal mb-16 text-left leading-tight max-w-4xl">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-headline font-normal mb-16 text-left leading-[1.1] max-w-4xl">
             {title}
           </h2>
           

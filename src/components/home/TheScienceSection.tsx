@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo } from 'react';
@@ -22,6 +21,7 @@ interface TheScienceSectionProps {
   label?: string;
   title?: string;
   points?: SciencePointData[];
+  visualUrl?: string;
 }
 
 const ICON_MAP = [Microscope, Activity, ShieldCheck, Zap];
@@ -29,7 +29,8 @@ const ICON_MAP = [Microscope, Activity, ShieldCheck, Zap];
 export function TheScienceSection({
   label = "THE SCIENCE",
   title = "Clinical Grade Bioavailability",
-  points = []
+  points = [],
+  visualUrl
 }: TheScienceSectionProps) {
   const db = useFirestore();
   const productsRef = useMemoFirebase(() => collection(db, 'products'), [db]);
@@ -45,6 +46,8 @@ export function TheScienceSection({
       ['Joint Health', 'Relaxation & Sleep', 'Heart & Brain'].includes(p.category)
     ).slice(0, 3);
   }, [products]);
+
+  const isVideo = visualUrl?.endsWith('.mp4');
 
   return (
     <section className="relative py-24 md:py-32 bg-primary text-white" id="science">
@@ -71,8 +74,8 @@ export function TheScienceSection({
             {/* STACKING WRAPPER - Isolates the protocol stack logic */}
             <div className="relative pb-8">
               {/* Protocol Title - Anchored Sticky Node */}
-              <div className="sticky top-24 z-10 py-4 mb-12 w-full md:whitespace-nowrap max-w-xl">
-                <h3 className="text-2xl md:text-4xl lg:text-5xl font-headline font-normal leading-none text-white">
+              <div className="sticky top-24 z-10 py-4 mb-12 w-full max-w-xl">
+                <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-headline font-normal leading-[1.1] text-white">
                   {title}
                 </h3>
               </div>
@@ -107,15 +110,15 @@ export function TheScienceSection({
               viewport={{ once: true }}
               className="pt-24 mt-24 border-t border-white/50"
             >
-              <div className="flex items-center justify-between mb-12 gap-4">
+              <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-4">
                 <h4 className="text-3xl font-headline font-normal whitespace-nowrap">Related Protocols</h4>
-                <div className="h-px flex-1 bg-white/50 mx-4" />
+                <div className="h-px flex-1 bg-white/50 mx-4 hidden md:block" />
                 <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/60 whitespace-nowrap shrink-0">
                   Lab-Verified Synergies
                 </span>
               </div>
               
-              <div className="grid grid-cols-1 gap-4">
+              <div className="grid grid-cols-1 gap-6">
                 {isLoading ? (
                   <div className="flex justify-center p-12">
                     <Loader2 className="h-10 w-10 animate-spin opacity-20" />
@@ -168,14 +171,35 @@ export function TheScienceSection({
                 animate={{ opacity: 1, scale: 1 }}
                 className="relative h-full w-full rounded-3xl overflow-hidden border border-white/30 group shadow-none"
               >
-                <video
-                  className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                  src="https://videos.pexels.com/video-files/3209828/3209828-hd_1920_1080_25fps.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                ></video>
+                {visualUrl ? (
+                  isVideo ? (
+                    <video
+                      className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                      src={visualUrl}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                    ></video>
+                  ) : (
+                    <Image 
+                      src={visualUrl} 
+                      alt="Science Visual" 
+                      fill 
+                      className="object-cover transition-transform duration-1000 group-hover:scale-105 opacity-60 grayscale hover:grayscale-0"
+                    />
+                  )
+                ) : (
+                  <video
+                    className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                    src="https://videos.pexels.com/video-files/3209828/3209828-hd_1920_1080_25fps.mp4"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                  ></video>
+                )}
+                
                 <div className="absolute inset-0 bg-primary/20 mix-blend-multiply transition-opacity duration-500 group-hover:opacity-40" />
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-primary/40" />
                 

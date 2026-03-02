@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -68,6 +69,7 @@ export default function AdminSettingsPage() {
     logoUrl: '',
     logoWhiteUrl: '',
     faviconUrl: '',
+    megaMenuBgUrl: '',
     currencySymbol: '$',
     currencyCode: 'USD',
     taxRate: 0,
@@ -100,6 +102,7 @@ export default function AdminSettingsPage() {
         logoUrl: settings.logoUrl || '',
         logoWhiteUrl: settings.logoWhiteUrl || '',
         faviconUrl: settings.faviconUrl || '',
+        megaMenuBgUrl: settings.megaMenuBgUrl || '',
         currencySymbol: settings.currencySymbol || '$',
         currencyCode: settings.currencyCode || 'USD',
         primaryColor: settings.primaryColor || '',
@@ -157,7 +160,8 @@ export default function AdminSettingsPage() {
         cloudinaryData.append('file', file);
         cloudinaryData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
 
-        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+        // Transitioned to /auto for Hybrid Media (Video/Image)
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`, {
           method: 'POST',
           body: cloudinaryData,
         });
@@ -372,14 +376,27 @@ export default function AdminSettingsPage() {
                           </div>
                         </div>
                       </div>
-                      <div className="space-y-2">
-                        <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Favicon Asset URL</Label>
-                        <div className="flex gap-2">
-                          <Input name="faviconUrl" value={formData.faviconUrl || ''} onChange={handleInputChange} className="h-12 bg-muted/20 border-none flex-1" placeholder="https://..." />
-                          <label className="h-12 w-12 rounded-md bg-primary text-white flex items-center justify-center cursor-pointer shrink-0">
-                            <Upload className="h-4 w-4" />
-                            <input type="file" className="hidden" onChange={(e) => handleCloudinaryUpload(e, 'faviconUrl')} />
-                          </label>
+                      
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
+                          <Label className="text-[10px] font-bold uppercase tracking-widest">Favicon Asset URL</Label>
+                          <div className="flex gap-2">
+                            <Input name="faviconUrl" value={formData.faviconUrl || ''} onChange={handleInputChange} className="h-12 bg-muted/20 border-none flex-1" placeholder="https://..." />
+                            <label className="h-12 w-12 rounded-md bg-primary text-white flex items-center justify-center cursor-pointer shrink-0">
+                              <Upload className="h-4 w-4" />
+                              <input type="file" className="hidden" onChange={(e) => handleCloudinaryUpload(e, 'faviconUrl')} />
+                            </label>
+                          </div>
+                        </div>
+                        <div className="space-y-4">
+                          <Label className="text-[10px] font-bold uppercase tracking-widest text-primary">Mega Menu Background</Label>
+                          <div className="flex gap-2">
+                            <Input name="megaMenuBgUrl" value={formData.megaMenuBgUrl || ''} onChange={handleInputChange} className="h-12 bg-muted/20 border-none flex-1" placeholder="Image or MP4 URL" />
+                            <label className="h-12 w-12 rounded-md bg-primary text-white flex items-center justify-center cursor-pointer shrink-0">
+                              <Upload className="h-4 w-4" />
+                              <input type="file" className="hidden" onChange={(e) => handleCloudinaryUpload(e, 'megaMenuBgUrl')} />
+                            </label>
+                          </div>
                         </div>
                       </div>
                     </div>

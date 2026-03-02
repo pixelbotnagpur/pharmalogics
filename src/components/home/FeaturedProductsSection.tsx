@@ -26,7 +26,7 @@ export function FeaturedProductsSection() {
           refId="REG.CATALOG.INFRA"
         />
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 min-h-[400px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-6 min-h-[400px]">
           {isLoading ? (
             <div className="col-span-full flex items-center justify-center py-20">
               <Loader2 className="h-8 w-8 animate-spin text-primary opacity-20" />

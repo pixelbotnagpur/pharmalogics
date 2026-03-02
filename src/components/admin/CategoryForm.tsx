@@ -63,7 +63,7 @@ export function CategoryForm({ initialData, onSubmit, isLoading, title }: Catego
       imageSrc: initialData.imageSrc || '',
       imageHint: initialData.imageHint || 'category abstract',
       seoTitle: initialData.seoTitle || '',
-      seoDescription: initialData.seoDescription || ''
+      seoDescription: initialData.seoDescription || 'clinical taxonomy node'
     } : {
       name: '',
       slug: '',
@@ -84,19 +84,27 @@ export function CategoryForm({ initialData, onSubmit, isLoading, title }: Catego
         formData.append('file', file);
         formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
 
-        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+        // Transitioned to /auto for universal support
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`, {
           method: 'POST',
           body: formData,
         });
 
-        if (!response.ok) throw new Error('Upload failed');
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData?.error?.message || 'Upload failed');
+        }
 
         const data = await response.json();
         onChange(data.secure_url);
         toast({ title: "Node Visual Synchronized", description: "Category asset has been uploaded to Cloudinary." });
-      } catch (error) {
-        console.error("Upload failed:", error);
-        toast({ variant: "destructive", title: "Storage Error", description: "Could not upload taxonomy asset to Cloudinary. Check your configuration." });
+      } catch (error: any) {
+        console.error("Taxonomy Asset Error:", error);
+        toast({ 
+          variant: "destructive", 
+          title: "Storage Error", 
+          description: error.message || "Could not upload taxonomy asset to Cloudinary. Check your configuration." 
+        });
       } finally {
         setIsUploading(false);
       }

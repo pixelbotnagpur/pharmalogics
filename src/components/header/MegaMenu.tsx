@@ -54,8 +54,8 @@ export function MegaMenu({ commitmentLinks }: MegaMenuProps) {
                         <Card className="overflow-hidden h-full bg-card rounded-lg border-0 shadow-sm group-hover/button:bg-card/80 transition-colors">
                             <CardContent className="p-6 flex flex-col gap-6 h-full">
                                 <div className="flex items-center justify-between">
-                                    <div className="relative w-16 h-16 flex-shrink-0">
-                                        <Image src={category.imageSrc} alt={category.name} fill className="object-contain" data-ai-hint={category.imageHint} sizes="64px" />
+                                    <div className="relative w-24 h-24 flex-shrink-0">
+                                        <Image src={category.imageSrc} alt={category.name} fill className="object-contain" data-ai-hint={category.imageHint} sizes="96px" />
                                     </div>
                                     <div className={cn(
                                       "flex-shrink-0 rounded-md h-8 w-8 flex items-center justify-center bg-accent text-accent-foreground transition-colors duration-300",

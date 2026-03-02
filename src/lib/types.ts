@@ -207,6 +207,7 @@ export type StoreSettings = {
   logoUrl?: string;
   logoWhiteUrl?: string;
   faviconUrl?: string;
+  megaMenuBgUrl?: string;
   primaryColor?: string;
   backgroundColor?: string;
   accentColor?: string;

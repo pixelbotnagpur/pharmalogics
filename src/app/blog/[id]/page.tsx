@@ -1,4 +1,3 @@
-
 'use client';
 
 import { use, useMemo } from 'react';
@@ -67,7 +66,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ id: string 
         <div className="container mx-auto px-4 relative z-10 pb-16">
           <div className="max-w-4xl space-y-6">
             <Badge variant="accent" className="text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 border-none shadow-xl">
-              {post.category} / NODE: {post.id}
+              {post.category}
             </Badge>
             <h1 className="text-4xl md:text-7xl font-headline font-normal text-white leading-[1.1]">
               {post.title}

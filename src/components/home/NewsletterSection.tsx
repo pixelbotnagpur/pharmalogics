@@ -4,12 +4,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { doc } from 'firebase/firestore';
+import type { StoreSettings } from '@/lib/types';
 
 export function NewsletterSection() {
+  const db = useFirestore();
+  const settingsRef = useMemoFirebase(() => doc(db, 'settings', 'store'), [db]);
+  const { data: settings } = useDoc<StoreSettings>(settingsRef);
+  
+  const storeName = settings?.storeName || 'Pharmlogics';
+
   return (
     <section className="py-12 md:py-24 bg-primary/90 backdrop-blur-sm text-primary-foreground">
       <div className="container mx-auto px-4 max-w-2xl text-center">
-        <h2 className="text-4xl md:text-5xl font-headline font-normal">Inside Pharmlogics</h2>
+        <h2 className="text-4xl md:text-5xl font-headline font-normal">Inside {storeName}</h2>
         <p className="mt-4 text-primary-foreground/80">
           Sign up for 10% off your first purchase and early access to launches, news, and offers.
         </p>
@@ -25,7 +34,7 @@ export function NewsletterSection() {
           <div className="flex items-center space-x-2 justify-center pt-2">
             <Checkbox id="terms" className="border-primary-foreground/60 data-[state=checked]:bg-accent data-[state=checked]:border-transparent" />
             <Label htmlFor="terms" className="text-sm font-light text-primary-foreground/80">
-              Pharmlogics can contact me via email about promotions and content.
+              {storeName} can contact me via email about promotions and content.
             </Label>
           </div>
         </form>

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { CategoryHighlightsSection } from '@/components/home/CategoryHighlightsSection';
@@ -100,6 +99,7 @@ export default function Home() {
         description={content.hero.description}
         ctaLabel={content.hero.ctaLabel}
         ctaHref={content.hero.ctaHref}
+        bgImageUrl={content.hero.bgImageUrl}
       />
       <FeaturedProductsSection />
       <WhyWeExistSection 
@@ -113,6 +113,7 @@ export default function Home() {
         label={content.science.label}
         title={content.science.title}
         points={content.science.points}
+        visualUrl={content.science.visualUrl}
       />
       <BundlePackSection />
       <CategoryHighlightsSection />
@@ -124,14 +125,18 @@ export default function Home() {
         quote={content.expert.quote}
         author={content.expert.author}
         avatarId={content.expert.avatarId}
+        avatarUrl={content.expert.avatarUrl}
         mainImageId={content.expert.mainImageId}
+        mainImageUrl={content.expert.mainImageUrl}
       />
 
       <DosageComparisonSection 
         title={content.comparison.title}
         description={content.comparison.description}
         bgImageId={content.comparison.bgImageId}
+        bgImageUrl={content.comparison.bgImageUrl}
         personImageId={content.comparison.personImageId}
+        personImageUrl={content.comparison.personImageUrl}
         rows={content.comparison.rows}
       />
 

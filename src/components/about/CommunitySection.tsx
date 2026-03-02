@@ -20,14 +20,25 @@ export function CommunitySection({ label, title, paragraphs, image, ctaLabel, ct
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-10 gap-16 items-stretch">
           {/* Image Column */}
-          <div className="lg:col-span-7 relative aspect-[14/9] w-full rounded-2xl overflow-hidden">
+          <div className="lg:col-span-7 relative aspect-[14/9] w-full rounded-2xl overflow-hidden group cursor-pointer">
+            {/* Base Layer: High-integrity Grayscale */}
             <Image 
               src={image.imageUrl} 
               alt="Community" 
               fill 
-              className="object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+              className="object-cover grayscale transition-transform duration-1000 group-hover:scale-105"
               data-ai-hint={image.imageHint}
             />
+            
+            {/* Reveal Layer: Clinical Color Reveal from Left to Right */}
+            <div className="absolute inset-0 transition-all duration-700 ease-clinical [clip-path:inset(0_100%_0_0)] group-hover:[clip-path:inset(0_0_0_0)] overflow-hidden">
+              <Image 
+                src={image.imageUrl} 
+                alt="Community Reveal" 
+                fill 
+                className="object-cover transition-transform duration-1000 group-hover:scale-105"
+              />
+            </div>
           </div>
 
           {/* Text Column */}

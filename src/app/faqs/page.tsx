@@ -89,9 +89,9 @@ export default function FaqsPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/40 to-transparent" />
         
         <div className="relative z-20 h-full flex items-end justify-between text-left p-8 md:p-16">
-          <div className="max-w-3xl">
+          <div className="max-w-4xl">
             <p className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-white/80 mb-6 font-bold">SUPPORT REGISTRY</p>
-            <h1 className="text-5xl md:text-7xl font-headline font-normal text-white leading-[1.1]">Frequently Asked <br className="hidden md:block" /> Questions</h1>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-headline font-normal text-white leading-[1.1]">Frequently Asked <br className="hidden md:block" /> Questions</h1>
           </div>
           <div className="hidden lg:flex items-center gap-1 bg-white/10 backdrop-blur-md p-1 rounded-full border border-white/20 mb-4">
             {policyNavItems.map((item) => (

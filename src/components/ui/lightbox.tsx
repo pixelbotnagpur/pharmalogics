@@ -58,6 +58,7 @@ export function Lightbox({
   const [isZoomed, setIsZoomed] = useState(false);
   const [showThumbnails, setShowThumbnails] = useState(true);
   const thumbnailContainerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const setCurrentImageIndex = (index: number) => {
     setCurrentImageIndexState((prev) => {
@@ -115,7 +116,7 @@ export function Lightbox({
   const handleZoom = () => setIsZoomed((prev) => !prev);
 
   const handleFullscreen = () => {
-    const elem = document.querySelector(`.${className}`);
+    const elem = contentRef.current;
     if (!elem) return;
     if (!document.fullscreenElement) {
       elem.requestFullscreen().catch((err) => {
@@ -136,17 +137,23 @@ export function Lightbox({
 
   return (
     <Dialog open={open} onOpenChange={handleDialogChange}>
-      <DialogContent className={cn('w-screen h-screen max-w-full p-0 bg-background border-none grid grid-rows-[auto_1fr_auto] [&>button]:hidden', className)}>
+      <DialogContent 
+        ref={contentRef}
+        className={cn(
+          'fixed inset-0 w-full h-dvh max-w-none m-0 p-0 bg-background border-none flex flex-col translate-x-0 translate-y-0 left-0 top-0 rounded-none [&>button]:hidden outline-none z-[100] overflow-hidden', 
+          className
+        )}
+      >
         <DialogHeader className="sr-only">
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
 
-        {/* Header */}
-        <div className="flex items-center justify-between px-2 sm:px-4 h-14 sm:h-16 border-b z-10 bg-background">
-          <span className="text-xs sm:text-sm text-muted-foreground ml-2">
+        {/* Header - Fixed height, flex-row */}
+        <div className="flex items-center justify-between px-4 h-14 sm:h-16 border-b z-10 bg-background shrink-0">
+          <span className="text-xs sm:text-sm text-muted-foreground font-medium">
             {images.length > 0 ? currentImageIndex + 1 : 0} / {images.length}
           </span>
-          <div className="flex items-center gap-0 sm:gap-0.5">
+          <div className="flex items-center gap-0.5">
             <Button variant="ghost" size="icon" className="h-9 w-9" aria-label="Zoom in" onClick={handleZoom}><Search className="h-4 w-4" /></Button>
             <Button variant="ghost" size="icon" className="h-9 w-9" aria-label={isPlaying ? 'Pause slideshow' : 'Play slideshow'} onClick={togglePlay}>
               {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
@@ -155,18 +162,18 @@ export function Lightbox({
             <Button variant="ghost" size="icon" className="h-9 w-9 hidden sm:flex" aria-label="Toggle thumbnails" onClick={toggleThumbnails}><LayoutGrid className="h-4 w-4" /></Button>
             <DialogClose asChild>
               <Button variant="ghost" size="icon" className="h-9 w-9" aria-label="Close lightbox">
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4" />
               </Button>
             </DialogClose>
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="relative flex items-center justify-center overflow-hidden bg-background/50">
+        {/* Main Content Area - Expands to fill, centers image */}
+        <div className="relative flex-1 flex items-center justify-center overflow-hidden bg-background/50">
           <AnimatePresence initial={false} custom={direction}>
             <motion.div
               key={currentImageIndex}
-              className="absolute inset-0 p-2 sm:p-8"
+              className="absolute inset-0 flex items-center justify-center p-4 sm:p-12"
               custom={direction}
               variants={variants}
               initial="enter"
@@ -178,15 +185,20 @@ export function Lightbox({
               }}
             >
               {images[currentImageIndex] && (
-                <Image
-                  src={images[currentImageIndex]}
-                  alt={`${altPrefix} ${currentImageIndex + 1}`}
-                  fill
-                  className={cn("object-contain transition-transform duration-300", isZoomed && "scale-125 cursor-zoom-out")}
-                  priority
-                  data-ai-hint={dataAiHint}
-                  onClick={() => isZoomed && setIsZoomed(false)}
-                />
+                <div className={cn(
+                  "relative w-full h-full transition-transform duration-300", 
+                  isZoomed && "scale-125 cursor-zoom-out"
+                )}>
+                  <Image
+                    src={images[currentImageIndex]}
+                    alt={`${altPrefix} ${currentImageIndex + 1}`}
+                    fill
+                    className="object-contain"
+                    priority
+                    data-ai-hint={dataAiHint}
+                    onClick={() => isZoomed && setIsZoomed(false)}
+                  />
+                </div>
               )}
             </motion.div>
           </AnimatePresence>
@@ -197,7 +209,7 @@ export function Lightbox({
                 variant="ghost" 
                 size="icon" 
                 onClick={prevImage} 
-                className="absolute left-1 sm:left-4 top-1/2 -translate-y-1/2 z-20 text-foreground h-10 w-10 sm:h-12 sm:w-12 hover:bg-background/20" 
+                className="absolute left-1 sm:left-4 top-1/2 -translate-y-1/2 z-20 text-foreground h-10 w-10 sm:h-12 sm:w-12 bg-background/5 hover:bg-background/20 rounded-full" 
                 aria-label="Previous image"
               >
                 <ChevronLeft className="h-6 w-6 sm:h-8 sm:w-8" />
@@ -206,7 +218,7 @@ export function Lightbox({
                 variant="ghost" 
                 size="icon" 
                 onClick={nextImage} 
-                className="absolute right-1 sm:right-4 top-1/2 -translate-y-1/2 z-20 text-foreground h-10 w-10 sm:h-12 sm:w-12 hover:bg-background/20" 
+                className="absolute right-1 sm:right-4 top-1/2 -translate-y-1/2 z-20 text-foreground h-10 w-10 sm:h-12 sm:w-12 bg-background/5 hover:bg-background/20 rounded-full" 
                 aria-label="Next image"
               >
                 <ChevronRight className="h-6 w-6 sm:h-8 sm:w-8" />
@@ -215,9 +227,9 @@ export function Lightbox({
           )}
         </div>
 
-        {/* Thumbnail Strip */}
+        {/* Thumbnail Strip - Fixed height */}
         {showThumbnails && images.length > 1 && (
-          <div className="w-full h-20 sm:h-32 px-2 sm:px-4 border-t bg-background">
+          <div className="w-full h-20 sm:h-32 px-4 border-t bg-background shrink-0">
             <div 
               ref={thumbnailContainerRef} 
               className="h-full w-full flex items-center justify-start sm:justify-center gap-2 overflow-x-auto no-scrollbar"
@@ -227,8 +239,8 @@ export function Lightbox({
                   key={img}
                   onClick={() => setCurrentImageIndex(index)}
                   className={cn(
-                    "relative h-14 sm:h-24 aspect-video shrink-0 overflow-hidden outline-none ring-offset-2 ring-primary focus-visible:ring-2 rounded-sm",
-                    currentImageIndex === index && "ring-2"
+                    "relative h-14 sm:h-24 aspect-video shrink-0 overflow-hidden outline-none ring-offset-2 ring-primary focus-visible:ring-2 rounded-sm transition-all",
+                    currentImageIndex === index ? "ring-2 scale-105" : "opacity-60 hover:opacity-100"
                   )}
                 >
                   <Image src={img} alt={`Thumbnail for ${altPrefix} ${index + 1}`} fill className="object-cover" />

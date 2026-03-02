@@ -11,7 +11,9 @@ interface MedicallyProvenSectionProps {
   quote: string;
   author: string;
   avatarId?: string;
+  avatarUrl?: string;
   mainImageId?: string;
+  mainImageUrl?: string;
 }
 
 const getImage = (id: string) => {
@@ -26,10 +28,12 @@ export function MedicallyProvenSection({
   quote,
   author,
   avatarId = 'brooke_aaron_avatar',
-  mainImageId = 'medically_proven_runner'
+  avatarUrl,
+  mainImageId = 'medically_proven_runner',
+  mainImageUrl
 }: MedicallyProvenSectionProps) {
-    const runnerImage = getImage(mainImageId);
-    const avatarImage = getImage(avatarId);
+    const runnerImage = mainImageUrl ? { imageUrl: mainImageUrl, imageHint: 'expert' } : getImage(mainImageId);
+    const avatarImage = avatarUrl ? { imageUrl: avatarUrl, imageHint: 'expert avatar' } : getImage(avatarId);
 
     return (
         <section className="bg-background py-12 md:py-16">
@@ -39,8 +43,8 @@ export function MedicallyProvenSection({
                     <div className="lg:col-span-4 flex flex-col p-8 md:p-12 lg:p-16 bg-white rounded-3xl">
                         {/* Top Aligned Content */}
                         <div>
-                            <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">{label}</p>
-                            <h2 className="text-4xl md:text-5xl font-headline font-normal mt-2 text-foreground leading-tight">
+                            <p className="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.2em] sm:tracking-[0.4em] text-primary">{label}</p>
+                            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-headline font-normal mt-2 text-foreground leading-[1.1]">
                                 {title}
                             </h2>
                             <p className="mt-6 text-lg text-muted-foreground font-light leading-relaxed">
@@ -71,7 +75,7 @@ export function MedicallyProvenSection({
                             src={runnerImage.imageUrl}
                             alt="Medically Proven"
                             fill
-                            className="object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+                            className="object-cover transition-all duration-1000"
                             sizes="(max-width: 1024px) 100vw, 60vw"
                             data-ai-hint={runnerImage.imageHint}
                         />

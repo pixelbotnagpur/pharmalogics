@@ -33,7 +33,7 @@ export function WhyWeExistSection({
         <div>
             <AnimatedWords 
                 text={animatedText} 
-                className="text-4xl md:text-7xl font-headline font-normal leading-[1.1]"
+                className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-headline font-normal leading-[1.1]"
             />
         </div>
       </div>

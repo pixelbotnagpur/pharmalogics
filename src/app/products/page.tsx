@@ -2,6 +2,7 @@
 
 import { Suspense, useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { PromoVideo } from '@/components/common/PromoVideo';
@@ -13,7 +14,7 @@ import type { Product, Category, WebPage } from '@/lib/types';
 
 function ProductGridSkeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-6">
       {Array.from({ length: 8 }).map((_, i) => (
         <div key={i} className="flex flex-col space-y-4">
           <Skeleton className="aspect-square w-full rounded-xl" />
@@ -56,10 +57,38 @@ export default function ProductsPage() {
     }
   };
 
+  // Robust Media Detection Protocol
+  const isVideo = content.hero.bgImageUrl?.endsWith('.mp4') || content.hero.bgImageUrl?.includes('video/upload');
+
   return (
     <>
       <section className="relative h-[70vh] w-full -mt-16 bg-primary overflow-hidden">
-        <PromoVideo />
+        {content.hero.bgImageUrl ? (
+          <div className="absolute inset-0 z-0">
+            {isVideo ? (
+              <video
+                src={content.hero.bgImageUrl}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute top-0 left-0 w-full h-full object-cover opacity-60"
+              />
+            ) : (
+              <Image 
+                src={content.hero.bgImageUrl} 
+                alt="Catalog background" 
+                fill 
+                className="object-cover opacity-60" 
+                priority
+              />
+            )}
+            <div className="absolute inset-0 bg-black/30 z-10" />
+          </div>
+        ) : (
+          <PromoVideo />
+        )}
+        
         <div className="relative z-20 h-full flex items-end justify-between text-left p-8 md:p-16">
           <div className="max-w-3xl">
             {pageLoading ? (
@@ -130,7 +159,7 @@ export default function ProductsPage() {
             ) : (
               <>
                 <TabsContent value="all" className="mt-0 focus-visible:outline-none focus-visible:ring-0">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-6">
                     {products?.map((product) => (
                       <ProductCard key={product.id} product={product} />
                     ))}
@@ -139,7 +168,7 @@ export default function ProductsPage() {
 
                 {categories?.map((category) => (
                   <TabsContent key={category.id} value={category.name} className="mt-0 focus-visible:outline-none focus-visible:ring-0">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-6">
                       {products
                         ?.filter((p) => p.category === category.name)
                         .map((product) => (

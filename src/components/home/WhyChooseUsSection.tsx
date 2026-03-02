@@ -60,8 +60,8 @@ export function WhyChooseUsSection({
             {/* Left Column: Contextual Narrative */}
             <div className="lg:col-span-5 flex flex-col justify-center text-left sticky top-32">
                 <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">{label}</p>
-                    <h2 className="text-4xl md:text-6xl font-headline font-normal mt-4 text-foreground leading-[1.1]">
+                    <p className="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.2em] sm:tracking-[0.4em] text-primary">{label}</p>
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-headline font-normal mt-4 text-foreground leading-[1.1]">
                       {title}
                     </h2>
                 </div>

@@ -27,6 +27,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { doc } from 'firebase/firestore';
+import type { StoreSettings } from '@/lib/types';
 
 /**
  * @fileOverview A landscape Membership Enrollment Dialogue for first-time visitors.
@@ -40,6 +43,12 @@ export function NewsletterDialog() {
   const [agreed, setAccepted] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const isMobile = useIsMobile();
+
+  const db = useFirestore();
+  const settingsRef = useMemoFirebase(() => doc(db, 'settings', 'store'), [db]);
+  const { data: settings } = useDoc<StoreSettings>(settingsRef);
+  
+  const storeName = settings?.storeName || 'Pharmlogics';
 
   const heroImage = PlaceHolderImages.find(p => p.id === 'why_exist_3');
 
@@ -100,7 +109,7 @@ export function NewsletterDialog() {
                   Optimize your <br /> biological edge.
                 </h2>
                 <p className="text-white/70 font-light text-sm leading-relaxed max-w-xs">
-                  Establish your membership in the Pharmlogics community to unlock the full potential of your wellness journey.
+                  Establish your membership in the {storeName} community to unlock the full potential of your wellness journey.
                 </p>
               </div>
 
@@ -183,7 +192,7 @@ export function NewsletterDialog() {
                         className="mt-1 border-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-transparent rounded-none" 
                       />
                       <Label htmlFor="newsletter-accept" className="text-[10px] text-muted-foreground font-light leading-relaxed cursor-pointer select-none">
-                        I authorize Pharmlogics to synchronize my digital node with clinical updates, formula launches, and membership protocols.
+                        I authorize {storeName} to synchronize my digital node with clinical updates, formula launches, and membership protocols.
                       </Label>
                     </div>
 

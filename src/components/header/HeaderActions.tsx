@@ -1,17 +1,11 @@
-
 "use client";
 
-import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { cn } from '@/lib/utils';
 import { NotificationBell } from '@/components/common/NotificationBell';
-
-// Heavily logic-dependent components loaded dynamically to optimize initial TTI
-const CartSheet = dynamic(() => import('@/components/cart/CartSheet').then(mod => mod.CartSheet), { ssr: false });
-const AccountSheet = dynamic(() => import('@/components/header/AccountSheet').then(mod => mod.AccountSheet), { ssr: false });
 
 interface HeaderActionsProps {
   isLoggedIn: boolean;
@@ -105,14 +99,6 @@ export function HeaderActions({
       >
         BAG [<span>{itemCount}</span>]
       </Button>
-
-      <CartSheet />
-      <AccountSheet 
-        isOpen={isAccountOpen} 
-        onClose={() => setIsAccountOpen(false)} 
-        user={user}
-        onLogout={onLogout}
-      />
     </div>
   );
 }

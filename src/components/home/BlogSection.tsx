@@ -49,14 +49,26 @@ export function BlogSection() {
               <Link key={post.id} href={`/blog/${post.id}`} className="group">
                 <Card className="border-none shadow-none bg-transparent overflow-hidden rounded-none h-full flex flex-col">
                   <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl mb-8">
+                    {/* Base Layer: High-integrity Grayscale */}
                     <Image 
                       src={post.imageUrl || `https://picsum.photos/seed/${post.id}/800/500`} 
                       alt={post.title} 
                       fill 
-                      className="object-cover transition-transform duration-1000 group-hover:scale-110 grayscale hover:grayscale-0"
+                      className="object-cover grayscale transition-transform duration-1000 group-hover:scale-110"
                       data-ai-hint={post.imageHint}
                     />
-                    <div className="absolute top-4 left-4">
+                    
+                    {/* Reveal Layer: Clinical Color Reveal from Left to Right */}
+                    <div className="absolute inset-0 transition-all duration-700 ease-clinical [clip-path:inset(0_100%_0_0)] group-hover:[clip-path:inset(0_0_0_0)] overflow-hidden">
+                      <Image 
+                        src={post.imageUrl || `https://picsum.photos/seed/${post.id}/800/500`} 
+                        alt={post.title} 
+                        fill 
+                        className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                      />
+                    </div>
+
+                    <div className="absolute top-4 left-4 z-20">
                       <Badge variant="accent" className="text-[8px] font-bold uppercase tracking-[0.2em] px-3 py-1.5 shadow-lg border-none">
                         {post.category}
                       </Badge>

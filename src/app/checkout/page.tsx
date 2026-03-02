@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -92,6 +93,7 @@ export default function CheckoutPage() {
 
   const settingsRef = useMemoFirebase(() => doc(db, 'settings', 'store'), [db]);
   const { data: settings, isLoading: isSettingsLoading } = useDoc<StoreSettings>(settingsRef);
+  const storeName = settings?.storeName || 'Clinical Brand';
   
   const couponsQuery = useMemoFirebase(() => collection(db, 'coupons'), [db]);
   const { data: coupons } = useCollection<Coupon>(couponsQuery);
@@ -186,7 +188,7 @@ export default function CheckoutPage() {
         key: order.key,
         amount: order.amount,
         currency: order.currency,
-        name: settings?.storeName || "Pharmlogics Healthcare",
+        name: storeName,
         description: "Acquisition of Clinical Formulas",
         image: settings?.logoUrl || "",
         order_id: order.id,
@@ -273,7 +275,7 @@ export default function CheckoutPage() {
       // 2. Dispatch REAL HTML receipt via Resend (Server Action)
       sendClinicalEmail({
         to: email,
-        subject: `[Pharmlogics] Confirmation: Protocol ${orderId} Received`,
+        subject: `[${storeName}] Confirmation: Protocol ${orderId} Received`,
         html: `
           <div style="font-family: sans-serif; max-width: 600px; padding: 20px; border: 1px solid #eee; border-radius: 12px;">
             <h1 style="color: #0000B8; margin-bottom: 8px;">Pure Excellence.</h1>
@@ -282,10 +284,10 @@ export default function CheckoutPage() {
               <p style="margin: 0; font-size: 12px; text-transform: uppercase; color: #999;">Order Identifier</p>
               <p style="margin: 4px 0 0; font-size: 20px; font-weight: bold; color: #0000B8;">${orderId}</p>
             </div>
-            <p>Your protocols are now queued for laboratory verification at our Miami facility. Lead time is estimated at 3-5 business days.</p>
+            <p>Your protocols are now queued for laboratory verification at our clinical facility. Lead time is estimated at 3-5 business days.</p>
             <a href="https://pharmlogics.dev/order-tracking?id=${orderId}" style="background: #0000B8; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: bold; margin-top: 10px;">View Registry Node</a>
             <hr style="margin: 30px 0; border: none; border-top: 1px dashed #ddd;" />
-            <p style="font-size: 10px; color: #999; text-transform: uppercase;">Official Registry Handshake Node 01 | Pharmlogics Healthcare</p>
+            <p style="font-size: 10px; color: #999; text-transform: uppercase;">Official Registry Handshake | ${storeName}</p>
           </div>
         `
       }).then(res => {

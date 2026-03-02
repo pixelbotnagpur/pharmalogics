@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -14,6 +15,7 @@ import { motion } from 'framer-motion';
 /**
  * @fileOverview CategoryHighlightsSection - A high-integrity taxonomy registry.
  * Features an immersive square-module layout with dynamic data reveal on interaction.
+ * Optimized for mobile visibility where hover states are unavailable.
  */
 export function CategoryHighlightsSection() {
   const db = useFirestore();
@@ -51,23 +53,23 @@ export function CategoryHighlightsSection() {
                 <Link href={`/products/category/${cat.slug}`} className="group block">
                   <Card className="relative aspect-square border border-border/40 shadow-none rounded-2xl bg-white overflow-hidden transition-all duration-500 hover:border-primary/30 group-hover:shadow-2xl group-hover:shadow-primary/5">
                     
-                    {/* Visual Node - Initially Full Height, Reduces on Hover */}
+                    {/* Visual Node - Split 50/50 on Mobile, Full-to-Split on Desktop */}
                     <div className={cn(
                       "absolute top-0 left-0 w-full overflow-hidden transition-all duration-700 ease-clinical bg-primary/[0.02]",
-                      "h-full group-hover:h-1/2"
+                      "h-1/2 md:h-full md:group-hover:h-1/2"
                     )}>
                       <div className="relative w-full h-full transition-all duration-700 ease-clinical">
                         <Image 
                           src={cat.imageSrc} 
                           alt={cat.name} 
                           fill 
-                          className="object-cover transition-transform duration-700 ease-clinical group-hover:scale-105" 
+                          className="object-cover transition-transform duration-700 ease-clinical md:group-hover:scale-105" 
                           data-ai-hint={cat.imageHint}
                         />
                       </div>
                       
-                      {/* Technical Identifier Tag - Hidden on Hover */}
-                      <div className="absolute top-8 left-8 z-10 transition-opacity duration-500 group-hover:opacity-0">
+                      {/* Technical Identifier Tag - Persistent on mobile, fade-on-hover on desktop */}
+                      <div className="absolute top-4 left-4 z-10 transition-opacity duration-500 opacity-100 md:group-hover:opacity-0">
                         <div className="bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-primary/10 flex items-center gap-2">
                           <div className="h-1 w-1 rounded-full bg-primary animate-pulse" />
                           <span className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-primary">
@@ -77,11 +79,12 @@ export function CategoryHighlightsSection() {
                       </div>
                     </div>
 
-                    {/* Content Node - Revealed from Bottom with Clip-Path */}
+                    {/* Content Node - Persistent on Mobile, Clipped Reveal on Desktop */}
                     <div className={cn(
                       "absolute bottom-0 left-0 w-full h-1/2 bg-white flex flex-col transition-all duration-700 ease-clinical border-t border-dashed border-primary/10",
-                      "[clip-path:polygon(0_100%,100%_100%,100%_100%,0_100%)]",
-                      "group-hover:[clip-path:polygon(0_0,100%_0,100%_100%,0_100%)]"
+                      "[clip-path:polygon(0_0,100%_0,100%_100%,0_100%)]", // Persistent mobile state
+                      "md:[clip-path:polygon(0_100%,100%_100%,100%_100%,0_100%)]", // Desktop hidden state
+                      "md:group-hover:[clip-path:polygon(0_0,100%_0,100%_100%,0_100%)]" // Desktop reveal state
                     )}>
                       <CardContent className="p-6 flex-1 flex flex-col justify-between">
                         {/* Identity Header */}

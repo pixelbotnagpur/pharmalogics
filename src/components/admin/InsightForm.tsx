@@ -115,19 +115,27 @@ export function InsightForm({ initialData, onSubmit, isLoading, title }: Insight
         formData.append('file', file);
         formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
 
-        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+        // Hybrid media endpoint support
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`, {
           method: 'POST',
           body: formData,
         });
 
-        if (!response.ok) throw new Error('Upload failed');
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData?.error?.message || 'Upload failed');
+        }
 
         const data = await response.json();
         onChange(data.secure_url);
         toast({ title: "Visual Node Synchronized", description: "Insight asset has been uploaded." });
-      } catch (error) {
-        console.error(error);
-        toast({ variant: "destructive", title: "Storage Error", description: "Could not upload asset." });
+      } catch (error: any) {
+        console.error("Insight Asset Logic Error:", error);
+        toast({ 
+          variant: "destructive", 
+          title: "Storage Error", 
+          description: error.message || "Could not upload asset to Cloudinary. Check your configuration." 
+        });
       } finally {
         setIsUploading(false);
       }

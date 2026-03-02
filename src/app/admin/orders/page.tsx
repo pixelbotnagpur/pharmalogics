@@ -67,9 +67,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import { StatusDialog } from '@/components/common/StatusDialog';
-import { useFirestore, useCollection, useMemoFirebase, setDocumentNonBlocking, addDocumentNonBlocking, useUser } from '@/firebase';
+import { useFirestore, useCollection, useMemoFirebase, setDocumentNonBlocking, addDocumentNonBlocking, useUser, useDoc } from '@/firebase';
 import { collection, query, orderBy, doc } from 'firebase/firestore';
-import type { Order, OrderStatus, LifecycleEvent, QCReport } from '@/lib/types';
+import type { Order, OrderStatus, LifecycleEvent, QCReport, StoreSettings } from '@/lib/types';
 import { generateQCReport } from '@/ai/flows/qc-report-generator';
 import { sendClinicalEmail } from '@/app/actions/email';
 
@@ -106,7 +106,10 @@ export default function AdminOrdersPage() {
   const [labProgress, setLabProgress] = useState(0);
   const [currentLabStep, setCurrentLabStep] = useState<typeof AUTOMATED_LAB_STEPS[0] | null>(null);
 
-  // ordersQuery is guarded by user identity to prevent permission errors
+  const settingsRef = useMemoFirebase(() => doc(db, 'settings', 'store'), [db]);
+  const { data: settings } = useDoc<StoreSettings>(settingsRef);
+  const storeName = settings?.storeName || 'Clinical Brand';
+
   const ordersQuery = useMemoFirebase(() => {
     if (!db || !user) return null;
     return query(collection(db, 'orders_global'), orderBy('createdAt', 'desc'));
@@ -122,13 +125,9 @@ export default function AdminOrdersPage() {
     );
   }, [orders, searchTerm]);
 
-  /**
-   * Dispatches both an in-app notification and a REAL email trigger via Resend.
-   */
   const dispatchCustomerUpdate = (order: Order, status: string, note?: string) => {
     if (!order.customerUid) return;
 
-    // 1. Dispatch In-App Alert (Firestore)
     const notificationRef = collection(db, 'users', order.customerUid, 'notifications');
     addDocumentNonBlocking(notificationRef, {
       title: `Logistics Update: ${status}`,
@@ -139,10 +138,9 @@ export default function AdminOrdersPage() {
       link: `/order-tracking?id=${order.id}`
     });
 
-    // 2. Dispatch REAL Email Dispatch (Resend Server Action)
     sendClinicalEmail({
       to: order.customerEmail,
-      subject: `[Pharmlogics] Clinical Update: Order ${order.id} is ${status}`,
+      subject: `[${storeName}] Clinical Update: Order ${order.id} is ${status}`,
       html: `
         <div style="font-family: sans-serif; max-width: 600px; padding: 20px;">
           <h2 style="color: #0000B8;">Logistics Update Dispatched</h2>
@@ -151,7 +149,7 @@ export default function AdminOrdersPage() {
             <p style="margin: 0; font-style: italic;">"${note}"</p>
           </div>
           <a href="https://pharmlogics.dev/order-tracking?id=${order.id}" style="background: #0000B8; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Trace Your Node</a>
-          <p style="font-size: 10px; color: #666; margin-top: 30px;">Authorized clinical update from Pharmlogics Healthcare.</p>
+          <p style="font-size: 10px; color: #666; margin-top: 30px;">Authorized clinical update from ${storeName}.</p>
         </div>
       `
     }).then(res => {

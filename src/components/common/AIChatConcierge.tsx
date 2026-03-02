@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, 
@@ -20,9 +20,9 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { chatWithConcierge } from '@/ai/flows/clinical-concierge';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy, limit } from 'firebase/firestore';
-import type { ProgressLog } from '@/lib/types';
+import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from '@/firebase';
+import { collection, query, orderBy, limit, doc } from 'firebase/firestore';
+import type { ProgressLog, StoreSettings } from '@/lib/types';
 
 interface Message {
   role: 'user' | 'model';
@@ -31,20 +31,31 @@ interface Message {
 }
 
 export function AIChatConcierge() {
+  const { user } = useUser();
+  const db = useFirestore();
+  
+  const settingsRef = useMemoFirebase(() => doc(db, 'settings', 'store'), [db]);
+  const { data: settings } = useDoc<StoreSettings>(settingsRef);
+  const storeName = settings?.storeName || 'Clinical';
+
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<Message[]>([
-    { 
-      role: 'model', 
-      content: 'Greetings. I am the Pharmlogics Clinical Concierge. How can I assist your biological optimization journey today?' 
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const { user } = useUser();
-  const db = useFirestore();
+  // Initialize greeting when settings are loaded
+  useEffect(() => {
+    if (messages.length === 0 && settings) {
+      setMessages([
+        { 
+          role: 'model', 
+          content: `Greetings. I am the ${storeName} Clinical Concierge. How can I assist your biological optimization journey today?` 
+        }
+      ]);
+    }
+  }, [settings, messages.length, storeName]);
 
   // Fetch recent biomarkers to provide context to the AI
   const logsQuery = useMemoFirebase(() => {
@@ -79,7 +90,6 @@ export function AIChatConcierge() {
     try {
       const history = messages.map(m => ({ role: m.role, content: m.content }));
       
-      // Map logs to a simple structure for the LLM context
       const biomarkers = logs?.map(log => ({
         date: new Date(log.date).toLocaleDateString(),
         metrics: log.metrics

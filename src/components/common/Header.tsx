@@ -17,9 +17,11 @@ import { useUser, useAuth, useFirestore, useDoc, useMemoFirebase } from '@/fireb
 import { signOut } from 'firebase/auth';
 import { doc } from 'firebase/firestore';
 
-// Dynamic imports for heavy panels to reduce main bundle size
+// Dynamic imports for heavy panels to optimize initial bundle weight and TTI
 const MegaMenu = dynamic(() => import('@/components/header/MegaMenu').then(mod => mod.MegaMenu), { ssr: false });
 const SearchSheet = dynamic(() => import('@/components/header/SearchSheet').then(mod => mod.SearchSheet), { ssr: false });
+const CartSheet = dynamic(() => import('@/components/cart/CartSheet').then(mod => mod.CartSheet), { ssr: false });
+const AccountSheet = dynamic(() => import('@/components/header/AccountSheet').then(mod => mod.AccountSheet), { ssr: false });
 
 export function Header() {
   const { user } = useUser();
@@ -64,7 +66,6 @@ export function Header() {
     return { name, email: user.email || '', initials };
   }, [user, profileData]);
 
-  // Expanded transparency protocol for all high-integrity hero pages
   const isTransparentPage = useMemo(() => {
     if (!pathname) return false;
     const transparentPaths = [
@@ -85,8 +86,6 @@ export function Header() {
   }, [pathname]);
 
   const isAnyMenuOpen = isMegaMenuOpen || isCartOpen || isSearchMenuOpen || isMobileMenuOpen || isAccountOpen;
-  
-  // Logic: Header is dark blue (primary) if scrolled OR any panel is open.
   const isHeaderPrimary = scrolled || isAnyMenuOpen;
   const useDarkText = !isHeaderPrimary && !isTransparentPage;
 
@@ -217,6 +216,13 @@ export function Header() {
 
       <MegaMenu commitmentLinks={commitmentLinks} />
       <SearchSheet isOpen={isSearchMenuOpen} onOpenChange={setIsSearchMenuOpen} popularProducts={popularProducts} handleAddToCart={handleAddToCart} />
+      <CartSheet />
+      <AccountSheet 
+        isOpen={isAccountOpen} 
+        onClose={() => setIsAccountOpen(false)} 
+        user={userData}
+        onLogout={handleLogout}
+      />
     </>
   );
 }

@@ -57,7 +57,7 @@ export function BundlePackSection() {
           <div className="lg:col-span-4 flex flex-col p-8 md:p-12 lg:p-16 bg-white rounded-3xl">
             {/* Top Aligned Content */}
             <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">THE ULTIMATE PROTOCOL</p>
+                <p className="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.2em] sm:tracking-[0.4em] text-primary">THE ULTIMATE PROTOCOL</p>
                 <h2 className="text-4xl md:text-5xl font-headline font-normal mt-2 text-foreground leading-tight">
                     {displayTitle}
                 </h2>

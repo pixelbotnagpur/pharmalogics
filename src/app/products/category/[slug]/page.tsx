@@ -2,6 +2,7 @@
 
 import { use, Suspense, useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -15,7 +16,7 @@ import { Loader2 } from 'lucide-react';
 
 function ProductGridSkeleton() {
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-6">
             {Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="flex flex-col space-y-3">
                     <Skeleton className="h-[250px] w-full rounded-xl" />
@@ -63,6 +64,9 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
 
   const isLoading = productsLoading || categoriesLoading;
 
+  // Robust Media Detection Protocol
+  const isVideo = category?.imageSrc?.endsWith('.mp4') || category?.imageSrc?.includes('video/upload');
+
   // 2. Early returns after all hooks are declared
   if (isLoading) {
     return (
@@ -82,7 +86,36 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
   return (
     <>
       <section className="relative h-[70vh] w-full -mt-16 bg-primary overflow-hidden">
-        <PromoVideo />
+        {/* Dynamic Category Hero Background */}
+        <div className="absolute inset-0 z-0">
+          {category.imageSrc ? (
+            <>
+              {isVideo ? (
+                <video 
+                  src={category.imageSrc} 
+                  autoPlay 
+                  loop 
+                  muted 
+                  playsInline 
+                  className="absolute top-0 left-0 w-full h-full object-cover opacity-60" 
+                />
+              ) : (
+                <Image 
+                  src={category.imageSrc} 
+                  alt={category.name} 
+                  fill 
+                  className="object-cover opacity-60 transition-all duration-1000"
+                  priority
+                  data-ai-hint={category.imageHint}
+                />
+              )}
+            </>
+          ) : (
+            <PromoVideo />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/40 to-transparent z-10" />
+        </div>
+
         <div className="relative z-20 h-full flex items-end justify-between text-left p-8 md:p-16">
           <div className="max-w-3xl">
             <p className="text-[10px] md:text-sm uppercase tracking-[0.4em] text-white/80 mb-6 font-bold">COLLECTION / {category.name.toUpperCase()}</p>
@@ -110,7 +143,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
             <p className="text-muted-foreground font-light uppercase tracking-[0.3em] text-[10px] font-bold mt-2">Targeted solutions for your vitality</p>
         </div>
         <Suspense fallback={<ProductGridSkeleton />}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-6">
                 {filteredProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                 ))}
